@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boyun.boyunfile.mapper.UserfileMapper">
+    <update id="updateFilepathByFilepath">
+        UPDATE boyunfile.userfile SET filePath=REPLACE(filePath, #{param1}, #{param2})
+        WHERE filePath like N'${param1}%' and userId = #{param3}
+    </update>
+
+    <update id="replaceFilePath">
+        UPDATE  boyunfile.userfile SET filepath=REPLACE(filepath, #{oldFilePath}, #{filePath})
+        WHERE filepath LIKE N'${oldFilePath}%' and userId = #{userId};
+    </update>
+
+    <select id="userfileList" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserfileListVO">
+        select * from boyunfile.userfile as a
+        left join boyunfile.file as f on f.fileId = a.fileId
+        <where>
+            <if test="userfile.userId != null">
+                and a.userId = #{userfile.userId}
+            </if>
+            <if test="userfile.filePath != null">
+                and a.filePath = #{userfile.filePath}
+            </if>
+            <if test="userfile.extendName != null">
+                and a.extendName = #{userfile.extendName}
+            </if>
+            and a.deleteFlag = 0
+        </where>
+        ORDER BY isDir desc
+        limit #{beginCount}, #{pageCount}
+    </select>
+
+    <sql id="selectByExtendName" >
+        left join boyunfile.file as f on f.fileId = boyunfile.userfile.fileId
+        where extendName in
+        <foreach collection="fileNameList" open="(" close=")" separator="," item="fileName" >
+            #{fileName}
+        </foreach>
+        and userId = #{userId}
+        and deleteFlag = 0
+    </sql>
+    <sql id="selectByNotExtendName">
+        left join boyunfile.file as f on f.fileId = boyunfile.userfile.fileId
+        where extendName not in
+        <foreach collection="fileNameList" open="(" close=")" separator="," item="fileName" >
+            #{fileName}
+        </foreach>
+        and userId = #{userId}
+        and deleteFlag = 0
+    </sql>
+    <select id="selectFileByExtendName" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserfileListVO">
+        select * from boyunfile.userfile
+        <include refid="selectByExtendName"></include>
+        limit #{beginCount}, #{pageCount}
+    </select>
+
+    <select id="selectCountByExtendName" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="java.lang.Long">
+        select count(*) from boyunfile.userfile
+        <include refid="selectByExtendName"></include>
+    </select>
+
+    <select id="selectFileNotInExtendNames" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserfileListVO">
+        select * from boyunfile.userfile
+        <include refid="selectByNotExtendName"></include>
+        limit #{beginCount}, #{pageCount}
+    </select>
+
+    <select id="selectCountNotInExtendNames" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="java.lang.Long">
+        select count(*) from boyunfile.userfile
+        <include refid="selectByNotExtendName"></include>
+    </select>
+    <select id="selectStorageSizeByUserId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        SELECT SUM(fileSize) FROM boyunfile.userfile
+        LEFT JOIN boyunfile.file ON file.fileId = userfile.fileId
+        WHERE userfile.userId = #{userId} and deleteFlag = 0
+    </select>
+
+    <select id="selectRecoveryFile" resultType="com.boyun.boyunfile.domain.UserFile" parameterType="java.lang.String">
+        select * from boyunfile.userfile
+        where userfile.deleteBatchNum = #{deleteBatchNum} and deleteFlag = 1
+    </select>
+
+</mapper>

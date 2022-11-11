@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boyun.boyunfile.mapper.RecoveryFileMapper">
+
+    <select id="getRecoveryFileList" resultType="com.boyun.boyunfile.vo.RecoveryFileListVO" parameterType="java.lang.Long">
+
+        select u.*,f.fileSize,r2.recoveryFileId from boyunfile.userfile u
+        left join boyunfile.file f on f.fileId = u.fileId
+        left join boyunfile.recoveryfile r2 on r2.userFileId = u.userFileId
+        where u.userFileId in (
+            select r.userFileId from boyunfile.recoveryfile r
+            where r.userId = #{userId} and r.deleteFlag = 0
+        )
+        ORDER BY isDir desc
+
+    </select>
+</mapper>
