@@ -55,7 +55,7 @@
         :label="fileType === 6 ? '原路径' : '所在路径'"
         prop="filePath"
         show-overflow-tooltip
-        v-if="fileType !== 0"
+        v-if="fileType !== 0 && screenWidth > 768"
       >
         <template slot-scope="scope">
           <div

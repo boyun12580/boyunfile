@@ -45,6 +45,7 @@ public class UserLoginInterceptor implements HandlerInterceptor {
         if (tokenUserInfo != null) {
             return true;
         } else {
+            log.error("用户暂未登录");
             response.sendError(401, "用户暂未登录");
             return false;
         }

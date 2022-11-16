@@ -4,7 +4,7 @@
 		<el-drawer
 			:visible.sync="isDrawer"
 			:with-header="false"
-			:size="210"
+			:size="180"
 			direction="ltr"
 			v-if="screenWidth <= 768"
 		>
@@ -70,7 +70,7 @@
       </el-menu>
 
       <!-- 存储信息显示 -->
-      <div class="storage-wrapper" :class="{ fold: isCollapse }">
+      <div class="storage-wrapper-min" :class="{ fold: isCollapse }">
         <el-progress
 					:percentage="storagePercentage"
 					:color="storageColor"
@@ -352,6 +352,7 @@ export default {
     border-right: solid 1px #e6e6e6;
     box-sizing: border-box;
     width: calc(100% - 11px);
+    // width: 180px;
     height: 66px;
     padding: 16px;
     z-index: 2;
@@ -375,6 +376,29 @@ export default {
     .text {
       font-size: 12px;
       justify-content: center;
+    }
+  }
+
+  .storage-wrapper-min {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    box-shadow: 0 -2px 12px 0 $BorderExtralight;
+    border-right: solid 1px #e6e6e6;
+    box-sizing: border-box;
+    width: calc(100%);
+    // width: 180px;
+    height: 66px;
+    padding: 16px;
+    z-index: 2;
+    color: $PrimaryText;
+    .text {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      flex-wrap: wrap;
     }
   }
 }

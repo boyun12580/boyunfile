@@ -1,5 +1,6 @@
 <template>
   <div class="loginWrapper" id="loginBackground">
+
     <div class="formWrapper">
       <h1 class="loginTitle">登录</h1>
       <el-form
@@ -108,11 +109,13 @@ export default {
     },
   },
 };
+
 </script>
 
 <style lang="stylus" scoped>
+
 .loginWrapper {
-  height: 550px !important;
+  // height: 550px !important;
   min-height: 550px !important;
   padding-top: 50px;
 
@@ -163,4 +166,7 @@ export default {
     }
   }
 }
+
+
+
 </style>

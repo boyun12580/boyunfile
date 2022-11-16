@@ -85,7 +85,7 @@ public class UserController {
             tokenUserInfo = objectMapper.readValue(subject, User.class);
 
         } catch (Exception e) {
-            log.error("解码异常");
+            log.error("检查用户登录信息->解码异常");
             return RestResult.fail().message("认证失败");
 
         }
