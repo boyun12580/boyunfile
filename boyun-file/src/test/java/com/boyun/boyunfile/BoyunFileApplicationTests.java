@@ -1,26 +1,19 @@
 package com.boyun.boyunfile;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.boyun.boyunfile.config.PropertiesConfig;
 import com.boyun.boyunfile.domain.User;
 import com.boyun.boyunfile.domain.UserFile;
 import com.boyun.boyunfile.mapper.RecoveryFileMapper;
 import com.boyun.boyunfile.mapper.UserMapper;
 import com.boyun.boyunfile.mapper.UserfileMapper;
-import com.boyun.boyunfile.service.UserfileService;
-import com.boyun.boyunfile.util.PathUtil;
+import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.util.PropertiesUtil;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.ResourceUtils;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -137,7 +130,7 @@ class BoyunFileApplicationTests {
 
 
     @Resource
-    UserfileService userfileService;
+    UserFileService userfileService;
     @Test
     void testVolatile(){
 //        StringBuffer stringBuffer = new StringBuffer("asa");
@@ -154,7 +147,7 @@ class BoyunFileApplicationTests {
 
     @Test
     void testUUID() {
-        String uuid = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString().replace("-","");
         System.out.println(uuid);
     }
 }

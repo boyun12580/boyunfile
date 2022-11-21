@@ -11,7 +11,7 @@ const routes = [
     component: Home, //  路由所使用的页面
     meta: {
       title: '我的网盘',
-      requireAuth: true
+      requireAuth: true //选择拦截
     }
 
   },
@@ -32,6 +32,15 @@ const routes = [
       import(/* webpackChunkName: "register" */ "../views/Register.vue"),
     meta: {
       title: '注册',
+      keepAlive: true
+    }
+  },
+  {
+    path: '/share/:shareBatchNum',
+    name: 'Share',
+    component: () => import(/* webpackChunkName: "share" */ "../views/Share.vue"),
+    meta: {
+      title: '分享',
       keepAlive: true
     }
   },

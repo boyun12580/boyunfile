@@ -19,7 +19,7 @@ import com.boyun.boyunfile.dto.UploadFileDTO;
 import com.boyun.boyunfile.service.FileService;
 import com.boyun.boyunfile.service.FiletransferService;
 import com.boyun.boyunfile.service.UserService;
-import com.boyun.boyunfile.service.UserfileService;
+import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.util.DateUtil;
 import com.boyun.boyunfile.util.FileUtil;
 import com.boyun.boyunfile.vo.UploadFileVo;
@@ -39,13 +39,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class FiletransferController {
 
     @Resource
-    UserService userService;
+    private UserService userService;
     @Resource
-    FileService fileService;
+    private FileService fileService;
     @Resource
-    UserfileService userfileService;
+    private UserFileService userfileService;
     @Resource
-    FiletransferService filetransferService;
+    private FiletransferService filetransferService;
 
     @Operation(summary = "极速上传", description = "校验文件MD5判断文件是否存在，如果存在直接上传成功并返回skipUpload=true，如果不存在返回skipUpload=false需要再次调用该接口的POST方法", tags = {"filetransfer"})
     @GetMapping(value = "/uploadfile")

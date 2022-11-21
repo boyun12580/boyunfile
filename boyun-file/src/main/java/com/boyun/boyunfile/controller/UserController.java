@@ -22,10 +22,10 @@ import javax.annotation.Resource;
 public class UserController {
 
     @Resource
-    UserService userService;
+    private UserService userService;
 
     @Resource
-    JwtUtil jwtUtil;
+    private JwtUtil jwtUtil;
 
     @PostMapping(value = "/register")
     @ResponseBody

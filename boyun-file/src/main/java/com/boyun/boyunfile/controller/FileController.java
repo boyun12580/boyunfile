@@ -15,13 +15,10 @@ import com.boyun.boyunfile.domain.UserFile;
 import com.boyun.boyunfile.dto.*;
 import com.boyun.boyunfile.service.FileService;
 import com.boyun.boyunfile.service.UserService;
-import com.boyun.boyunfile.service.UserfileService;
+import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.util.DateUtil;
 import com.boyun.boyunfile.vo.TreeNodeVO;
 import com.boyun.boyunfile.vo.UserfileListVO;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,11 +33,11 @@ import lombok.extern.slf4j.Slf4j;
 public class FileController {
 
     @Resource
-    FileService fileService;
+    private FileService fileService;
     @Resource
-    UserService userService;
+    private UserService userService;
     @Resource
-    UserfileService userfileService;
+    private UserFileService userfileService;
 
     @Operation(summary = "创建文件", description = "目录(文件夹)的创建", tags = {"file"})
     @PostMapping(value = "/createfile")

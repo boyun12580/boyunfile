@@ -11,7 +11,7 @@ import com.boyun.boyunfile.domain.UserFile;
 import com.boyun.boyunfile.mapper.FileMapper;
 import com.boyun.boyunfile.mapper.RecoveryFileMapper;
 import com.boyun.boyunfile.mapper.UserfileMapper;
-import com.boyun.boyunfile.service.UserfileService;
+import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.util.DateUtil;
 import com.boyun.boyunfile.vo.UserfileListVO;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
-public class UserfileServiceImpl extends ServiceImpl<UserfileMapper, UserFile> implements UserfileService {
+public class UserfileServiceImpl extends ServiceImpl<UserfileMapper, UserFile> implements UserFileService {
 
     @Resource
     UserfileMapper userfileMapper;
