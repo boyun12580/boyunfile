@@ -14,7 +14,7 @@ public class ShareFileDTO {
     private Long userFileId;
 
     @Schema(description = "过期时间")
-    private String Endtime;
+    private String endTime;
 
     @Schema(description = "提取码")
     private String extractionCode;

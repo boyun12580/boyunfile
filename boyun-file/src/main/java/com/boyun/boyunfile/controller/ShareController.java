@@ -1,7 +1,10 @@
 package com.boyun.boyunfile.controller;
 
 import com.boyun.boyunfile.common.RestResult;
+import com.boyun.boyunfile.constant.ShareConstant;
 import com.boyun.boyunfile.domain.Share;
+import com.boyun.boyunfile.domain.ShareFile;
+import com.boyun.boyunfile.domain.UserFile;
 import com.boyun.boyunfile.dto.ShareFileDTO;
 import com.boyun.boyunfile.service.ShareFileService;
 import com.boyun.boyunfile.service.ShareService;
@@ -55,24 +58,31 @@ public class ShareController {
 
         Share share = new Share();
         share.setUserId(shareFileDTO.getUserId());
-        share.setEndTime(shareFileDTO.getEndtime());
-        share.setShareType(Share.SHAREALL);
+        share.setEndTime(shareFileDTO.getEndTime());
+        share.setShareType(ShareConstant.SHAREALL);
         if(Strings.hasLength(shareFileDTO.getExtractionCode())){
             share.setExtractionCode(shareFileDTO.getExtractionCode());
-            share.setShareType(Share.SHAREPRIVATE);
+            share.setShareType(ShareConstant.SHAREPRIVATE);
         }
         String uuid = UUID.randomUUID().toString().replace("-", "");
         share.setShareBatchnum(uuid);
         share.setShareTime(DateUtil.getCurrentTime());
-        share.setShareStatus(Share.NOMALTIME);
+        share.setShareStatus(ShareConstant.NOMALTIME);
 
         if (Objects.isNull(share.getUserId())){
             return RestResult.fail().message("参数错误");
         }
 
+        UserFile userFile = userfileService.getById(shareFileDTO.getUserFileId());
+        ShareFile shareFile = new ShareFile();
+        shareFile.setSharebatchnum(uuid);
+        shareFile.setSharefilepath(userFile.getFilePath());
+        shareFile.setUserfileid(userFile.getUserFileId());
 
+        shareFileService.save(shareFile);
+        shareService.save(share);
 
-        return null;
+        return RestResult.success().message("分享成功");
     }
 
     @Operation(summary = "取消分享文件", description = "取消分享文件", tags = { "deleteshare" })

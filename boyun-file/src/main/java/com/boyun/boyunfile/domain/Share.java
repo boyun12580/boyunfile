@@ -26,8 +26,6 @@ public class Share  {
 //    分享好友
     public static final int SHAREFRIENDS = 2;
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @TableId(type = IdType.AUTO)

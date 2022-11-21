@@ -6,6 +6,7 @@ import com.boyun.boyunfile.mapper.RecoveryFileMapper;
 import com.boyun.boyunfile.mapper.UserMapper;
 import com.boyun.boyunfile.mapper.UserfileMapper;
 import com.boyun.boyunfile.service.UserFileService;
+import com.boyun.boyunfile.util.DateUtil;
 import com.boyun.boyunfile.util.PropertiesUtil;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -149,5 +154,13 @@ class BoyunFileApplicationTests {
     void testUUID() {
         String uuid = UUID.randomUUID().toString().replace("-","");
         System.out.println(uuid);
+    }
+
+    @Test
+    void time() throws ParseException {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        Date date1 = df.parse("2022-11-21 15:37:38");
+        Date date2 = new Date();
+        System.out.println(date1.getTime() < date2.getTime());
     }
 }
