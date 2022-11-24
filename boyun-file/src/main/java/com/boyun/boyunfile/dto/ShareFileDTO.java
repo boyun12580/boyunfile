@@ -10,13 +10,13 @@ public class ShareFileDTO {
     @Schema(description = "用户id")
     private Long userId;
 
-    @Schema(description = "用户文件id")
-    private Long userFileId;
+    @Schema(description = "用户文件id集合")
+    private String files;
 
     @Schema(description = "过期时间")
     private String endTime;
 
-    @Schema(description = "提取码")
-    private String extractionCode;
+    @Schema(description = "是否需要提取码")
+    private Integer shareType;
 
 }

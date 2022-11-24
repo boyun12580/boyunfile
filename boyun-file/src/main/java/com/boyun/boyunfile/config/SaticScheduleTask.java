@@ -26,13 +26,14 @@ public class SaticScheduleTask {
     @Autowired
     private ShareService shareService;
 
-    @Scheduled(cron = "0 */1 * * * ?")
+//    每天1点10分30秒触发任务
+    @Scheduled(cron = "30 10 1 * * ?")
     private void shareTimeTasks() throws ParseException {
         QueryWrapper<Share> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("endTime", "shareId","shareStatus");
         queryWrapper.eq("shareStatus", ShareConstant.NOMALTIME);
         List<Share> list = shareService.list(queryWrapper);
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         long dateCompare = new Date().getTime();
         log.info("执行定时任务->当前时为：" + new Date());
         for (Share share : list) {

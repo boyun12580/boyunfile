@@ -18,9 +18,8 @@ import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.IntStream;
 
 @Data
 class c1{
@@ -133,6 +132,14 @@ class BoyunFileApplicationTests {
         list.forEach(System.out::println);
     }
 
+    @Test
+    void randon() {
+        SplittableRandom splittableRandom = new SplittableRandom();
+        for (int i = 0; i < 100; i++) {
+            int randomWithSplittableRandom = splittableRandom.nextInt(10000, 99999);
+            System.out.println(randomWithSplittableRandom);
+        }
+    }
 
     @Resource
     UserFileService userfileService;
