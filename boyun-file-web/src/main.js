@@ -12,17 +12,35 @@ import "@/router/before.js";
 import uploader from 'vue-simple-uploader'
 import all from '@/libs/globalFunction.js'
 
+// 引入文件操作相关插件
+import fileOperationPlugins from '@/plugins/fileOperationPlugins.js'
+
+// 引入 Element UI 组件
+import element from '@/plugins/element.js'
+
+import config from '@/config/index.js'
+
 import CollapseTransition from 'element-ui/lib/transitions/collapse-transition'
 
 Vue.component(CollapseTransition.name, CollapseTransition)
 
 Vue.use(all)
 
+Vue.prototype.$config = config
+
 Vue.use(uploader)
 
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
+
+for (let key in fileOperationPlugins) {
+	Vue.prototype[`$${key}`] = fileOperationPlugins[key]
+}
+
+Vue.use(element)
+
+// Vue.prototype.$config = config
 
 new Vue({
   router,

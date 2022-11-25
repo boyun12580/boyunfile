@@ -57,7 +57,7 @@
         type="primary"
         icon="el-icon-share"
         :disabled="!operationFileList.length"
-        @click=""
+        @click="handleShareFileClick()"
         v-if="fileType >= 0 && fileType <= 5"
         >分享</el-button
       >
@@ -293,28 +293,33 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       })
-        .then(() => {
-          batchDeleteRecoveryFile({
-            files: JSON.stringify(this.operationFileList)
-          }).then((res) => {
-            if (res.success) {
-              this.$message({
-                message: res.message,
-                type: 'success'
-              })
-              this.$emit('getTableData') //  刷新文件列表
-            } else {
-              this.$message.error('失败' + res.message)
-            }
-          })
+      .then(() => {
+        batchDeleteRecoveryFile({
+          files: JSON.stringify(this.operationFileList)
+        }).then((res) => {
+          if (res.success) {
+            this.$message({
+              message: res.message,
+              type: 'success'
+            })
+            this.$emit('getTableData') //  刷新文件列表
+          } else {
+            this.$message.error('失败' + res.message)
+          }
         })
-        .catch(() => {
-          //  取消
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
+      })
+      .catch(() => {
+        //  取消
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         })
+      })
+    },
+    handleShareFileClick(){
+      this.$openDialog.shareFile({
+				fileInfo: this.operationFileList
+			})
     },
   },
 };

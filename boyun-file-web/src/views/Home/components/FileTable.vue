@@ -18,7 +18,7 @@
       ></el-table-column>
       <el-table-column label prop="isDir" :width="screenWidth <= 768 ? 40 : 56" align="center">
         <template slot-scope="scope">
-          <img :src="setFileImg(scope.row)" style="width: 30px" />
+          <img :src="setFileImg(scope.row)" style="width: 32px;height: 32px;" />
         </template>
       </el-table-column>
       <el-table-column prop="fileName" label="文件名">
@@ -164,6 +164,13 @@
               <el-button
                   type="text"
                   size="small"
+                  @click.native="handleClickShareFile(scope.row)"
+                  v-if="fileType >= 0 && fileType <= 5"
+                  >分享</el-button
+              >
+              <el-button
+                  type="text"
+                  size="small"
                   @click.native="handleClickRecoveryFile(scope.row)"
                   v-if="fileType == 6"
                   >还原</el-button
@@ -184,6 +191,7 @@
                     >下载</a
                   >
               </el-button>
+              
               </div>
           </div>
   
@@ -202,6 +210,9 @@
               >
               <el-dropdown-item @click.native="handleClickRename(scope.row)" v-if="fileType >= 0 && fileType <= 5"
                 >重命名</el-dropdown-item
+              >
+              <el-dropdown-item @click.native="handleClickShareFile(scope.row)" v-if="fileType >= 0 && fileType <= 5"
+                >分享</el-dropdown-item
               >
               <el-dropdown-item @click.native="handleClickRecoveryFile(scope.row)" v-if="fileType == 6"
                 >还原</el-dropdown-item
@@ -231,6 +242,8 @@
 import { deleteFile } from '@/request/file.js'
 import { renameFile } from '@/request/file.js' //  引入文件重命名接口
 import { recoveryFile, deleteRecoveryFile } from '@/request/recoveryFile.js'
+import config from '@/config/index.js'
+import shareFile from '@/views/Home/components/dialog/shareFile/Dialog.vue'
 
 
 export default {
@@ -251,6 +264,9 @@ export default {
         type: Number,
         required: true
     },
+  },
+  components:{
+    shareFile
   },
   data() {
     return {
@@ -300,6 +316,16 @@ export default {
       else{
         return row.isDir == 1 ? false : true;
       }
+    },
+
+    handleClickShareFile(row){
+      this.$openDialog.shareFile({
+				fileInfo: [
+					{
+						userFileId: row.userFileId
+					}
+				]
+			})
     },
 
     // 还原文件
@@ -433,9 +459,9 @@ export default {
                 let data = {
                     imgReviewVisible: true,
                     imgReviewList: [{
-                      fileUrl: `/api${row.fileUrl}`,
+                      fileUrl: `/${config.staticContext}${row.fileUrl}`,
                       // fileUrl: `${row.fileUrl}`,
-                      downloadLink: `/api/filetransfer/downloadfile?userFileId=${row.userFileId}`,
+                      downloadLink: `/${config.baseContext}/filetransfer/downloadfile?userFileId=${row.userFileId}`,
                         fileName: row.fileName,
                         extendName: row.extendName
                     }],
