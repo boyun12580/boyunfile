@@ -7,11 +7,11 @@ import com.boyun.boyunfile.domain.Share;
 import com.boyun.boyunfile.domain.ShareFile;
 import com.boyun.boyunfile.domain.UserFile;
 import com.boyun.boyunfile.dto.ShareFileDTO;
+import com.boyun.boyunfile.dto.ShareListDTO;
 import com.boyun.boyunfile.service.ShareFileService;
 import com.boyun.boyunfile.service.ShareService;
 import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.util.DateUtil;
-import io.jsonwebtoken.lang.Strings;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +42,10 @@ public class ShareController {
     @Operation(summary = "获取我的分享文件列表", description = "用来做前台文件列表展示", tags = { "getsharelist" })
     @GetMapping(value = "/getsharelist")
     @ResponseBody
-    public RestResult getShareList() {
-        //todo
+    public RestResult getShareList(@RequestBody ShareListDTO shareListDTO) {
+
+
+
         return null;
     }
 
