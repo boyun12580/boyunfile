@@ -15,13 +15,16 @@
         width="56"
         align="center"
         :selectable="selectEnable"
+        v-if="fileType != 8"
       ></el-table-column>
-      <el-table-column label prop="isDir" :width="screenWidth <= 768 ? 40 : 56" align="center">
+
+      <el-table-column label prop="isDir" :width="screenWidth <= 768 ? 40 : 56" align="center" key="isDir">
         <template slot-scope="scope">
-          <img :src="setFileImg(scope.row)" style="width: 32px;height: 32px;" />
+          <img :src="setFileImg(scope.row)" style="width: 30px;height: 30px;" />
         </template>
       </el-table-column>
-      <el-table-column prop="fileName" label="文件名">
+
+      <el-table-column prop="fileName" label="文件名" key="fileName">
         <template slot-scope="scope">
           <div style="cursor: pointer" @click="handleFileNameClick(scope.row)" v-if="fileType != 6">
             {{
@@ -54,8 +57,9 @@
       <el-table-column
         :label="fileType === 6 ? '原路径' : '所在路径'"
         prop="filePath"
+        key="filePath"
         show-overflow-tooltip
-        v-if="fileType !== 0 && screenWidth > 768"
+        v-if="fileType !== 0 && fileType !== 8 && screenWidth > 768"
       >
         <template slot-scope="scope">
           <div
@@ -104,7 +108,7 @@
         key="uploadTime"
         :sort-by="['uploadTime']"
         sortable
-        v-if="selectedColumnList.includes('uploadTime') && screenWidth > 768"
+        v-if="selectedColumnList.includes('uploadTime') && fileType !== 8 && screenWidth > 768"
       >
       </el-table-column>
 
@@ -118,85 +122,38 @@
         v-if="selectedColumnList.includes('deleteTime') && fileType == 6 && screenWidth > 768"
       >
       </el-table-column>
+
+      <el-table-column
+        prop="shareTime"
+        label="分享日期"
+        width="180"
+        key="shareTime"
+        :sort-by="['shareTime']"
+        sortable
+        v-if="fileType == 8 && screenWidth > 768"
+      >
+      </el-table-column>
+
+      <el-table-column
+        prop="endTime"
+        label="过期日期"
+        width="180"
+        key="endTime"
+        :sort-by="['endTime']"
+        sortable
+        v-if="fileType == 8 && screenWidth > 768"
+      >
+      </el-table-column>
   
       <!-- 表格操作列 自定义表格头，原有的 label="操作" 需要删除，宽度动态变化 -->
-      <el-table-column :width="operaColumnIsFold ? 100 : 100" v-if="screenWidth > 768">
-        <!-- 自定义表格头 -->
-        <template slot="header">
-          <span>操作</span>
-          <i
-            class="el-icon-circle-plus"
-            title="展开"
-            @click="operaColumnIsFold = true"
-          ></i>
-          <i
-            class="el-icon-remove"
-            title="折叠"
-            @click="operaColumnIsFold = false"
-          ></i>
-        </template>
+      <el-table-column
+        label="操作"
+        :width="operaColumnIsFold ? 100 : 100" 
+        v-if="screenWidth > 768"
+      >
         <template slot-scope="scope">
-          <!-- 操作列展开状态下的按钮 通过v-if控制 -->
-          <div class="opera-unfold" v-if="operaColumnIsFold">
-              <!-- 操作列展开状态下的按钮 -->
-              <div class="opera-unfold">
-              <el-button
-                  type="text"
-                  size="small"
-                  @click.native="handleClickDelete(scope.row)"
-                  v-if="fileType >= 0 && fileType <= 5"
-                  >删除</el-button
-              >
-              <el-button
-                  type="text"
-                  size="small"
-                  @click.native="handleClickMove(scope.row)"
-                  v-if="fileType >= 0 && fileType <= 5"
-                  >移动</el-button
-              >
-              <el-button
-                  type="text"
-                  size="small"
-                  @click.native="handleClickRename(scope.row)"
-                  v-if="fileType >= 0 && fileType <= 5"
-                  >重命名</el-button
-              >
-              <el-button
-                  type="text"
-                  size="small"
-                  @click.native="handleClickShareFile(scope.row)"
-                  v-if="fileType >= 0 && fileType <= 5"
-                  >分享</el-button
-              >
-              <el-button
-                  type="text"
-                  size="small"
-                  @click.native="handleClickRecoveryFile(scope.row)"
-                  v-if="fileType == 6"
-                  >还原</el-button
-              >
-              <el-button
-                  type="text"
-                  size="small"
-                  @click.native=""
-                  v-if="fileType == 6"
-                  >删除</el-button
-              >
-              <!-- 操作列展开状态下的下载按钮 -->
-              <el-button type="text" size="small" v-if="scope.row.isDir === 0 && fileType >= 0 && fileType <= 5">
-                  <a
-                    :href="`/api/filetransfer/downloadfile?userFileId=${scope.row.userFileId}`"
-                    target="_blank"
-                    style="display: block; color: inherit"
-                    >下载</a
-                  >
-              </el-button>
-              
-              </div>
-          </div>
-  
-          <!-- 操作列收缩状态下的按钮 通过v-else控制 -->
-          <el-dropdown trigger="click" v-else>
+         
+          <el-dropdown trigger="click">
             <el-button size="mini">
               操作
               <i class="el-icon-arrow-down el-icon--right"></i>
@@ -219,6 +176,12 @@
               >
               <el-dropdown-item @click.native="handleClickDeleteRecoveryFile(scope.row)" v-if="fileType == 6"
                 >删除</el-dropdown-item
+              >
+              <el-dropdown-item @click.native="handleClickShareFileInfo(scope.row)" v-if="fileType == 8"
+                >查看分享</el-dropdown-item
+              >
+              <el-dropdown-item @click.native="handleClickDeleteShareFile(scope.row)" v-if="fileType == 8 && scope.row.filePath == '/'"
+                >取消分享</el-dropdown-item
               >
               <!-- 操作列收缩状态下的下载按钮 -->
             <el-dropdown-item v-if="scope.row.isDir === 0 && fileType >= 0 && fileType <= 5">
@@ -318,6 +281,7 @@ export default {
       }
     },
 
+    //分享
     handleClickShareFile(row){
       this.$openDialog.shareFile({
 				fileInfo: [
@@ -326,6 +290,19 @@ export default {
 					}
 				]
 			})
+    },
+
+    handleClickShareFileInfo(row){
+      this.$openDialog.shareFileInfo({
+				shareData: 
+					{
+						shareBatchNum: row.shareBatchNum,
+            extractionCode: row.extractionCode
+					}
+			})
+    },
+    handleClickDeleteShareFile(row){
+
     },
 
     // 还原文件
@@ -448,8 +425,8 @@ export default {
         if (row.isDir) {
             this.$router.push({
                 query: {
-                    filePath: `${row.filePath}${row.fileName}/`,
-                    fileType: 0
+                  fileType: this.fileType,
+                  filePath: `${row.filePath}${row.fileName}/`
                 }
             })
         } else {

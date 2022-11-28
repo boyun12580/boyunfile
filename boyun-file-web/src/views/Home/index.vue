@@ -87,7 +87,8 @@ import ShowModel from './components/ShowModel.vue' //  引入查看模式切换�
 import FileGrid from './components/FileGrid.vue' //  引入网格组件
 import FileTimeLine from "./components/FileTimeLine.vue"; //  引入时间线模式组件
 import ImgReview from "@/components/ImgReview"; //  引入图片在线查看组件
-import {getRecoveryFileList} from "@/request/recoveryFile.js" // 回收站
+import { getRecoveryFileList } from "@/request/recoveryFile.js" // 回收站
+import { getsharelist } from "@/request/share.js" // 获取我的分享文件列表
 
 export default {
   name: "Home",
@@ -146,7 +147,7 @@ export default {
     },
     filePath() {
       // 当左侧菜单选择全部，文件路径发生变化时，再重新获取文件列表
-      if (this.fileType === 0) {
+      if (this.fileType === 0 || this.fileType == 8) {
         this.getFileData() //  获取文件列表
       }
     }
@@ -236,7 +237,8 @@ export default {
 
     // 获取分享文件列表
     getShareFileList(){
-      getFileListByPath({
+      getsharelist({
+          userId: this.$store.getters.userId,
           filePath: this.filePath, // 传递当前路径
           currentPage: this.pageData.currentPage,
           pageCount: this.pageData.pageCount
