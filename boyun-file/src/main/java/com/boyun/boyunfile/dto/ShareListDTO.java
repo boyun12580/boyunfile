@@ -7,6 +7,8 @@ import lombok.Data;
 @Schema(name = "获取我的分享文件列表DTO",required = true)
 public class ShareListDTO {
 
+    @Schema(description = "文件路径")
+    private String filePath;
     @Schema(description = "用户id")
     private Long userId;
     @Schema(description = "当前页码")

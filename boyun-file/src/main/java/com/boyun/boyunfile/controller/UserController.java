@@ -46,7 +46,7 @@ public class UserController {
     @Operation(summary = "用户登录", description = "用户登录认证后才能进入系统", tags = {"user"})
     public RestResult<LoginVO> userLogin(String telephone, String password) {
 
-        System.out.println(telephone + " " + password);
+        log.info("用户" + telephone + "正在登录...");
 
         LoginVO loginVO = new LoginVO();
         User user = new User();

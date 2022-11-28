@@ -1,6 +1,7 @@
 package com.boyun.boyunfile.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.boyun.boyunfile.common.RestResult;
 import com.boyun.boyunfile.constant.ShareConstant;
 import com.boyun.boyunfile.domain.Share;
@@ -12,6 +13,7 @@ import com.boyun.boyunfile.service.ShareFileService;
 import com.boyun.boyunfile.service.ShareService;
 import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.util.DateUtil;
+import com.boyun.boyunfile.vo.ShareListVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -35,18 +37,35 @@ public class ShareController {
     @Resource
     private ShareFileService shareFileService;
 
-    @Resource
-    private UserFileService userfileService;
-
 
     @Operation(summary = "获取我的分享文件列表", description = "用来做前台文件列表展示", tags = { "getsharelist" })
     @GetMapping(value = "/getsharelist")
     @ResponseBody
-    public RestResult getShareList(@RequestBody ShareListDTO shareListDTO) {
+    public RestResult getShareList(ShareListDTO shareListDTO) {
 
+//        LambdaQueryWrapper<Share> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(Share::getUserId, shareListDTO.getUserId())
+//                .and(shareLambdaQueryWrapper -> shareLambdaQueryWrapper
+//                        .eq(Share::getShareStatus, Share.NOMALTIME)
+//                        .or().eq(Share::getShareStatus, Share.EXPIREDTIME));
+//        List<Share> list = shareService.list(queryWrapper);
+//        List<ShareFile> shareList = new ArrayList<>();
+//
+//        LambdaQueryWrapper<ShareFile> fileQueryWrapper = new LambdaQueryWrapper<>();
+//        for (Share share : list) {
+//            fileQueryWrapper.clear();
+//            fileQueryWrapper.eq(ShareFile::getSharebatchnum, share.getShareBatchnum())
+//                    .eq(ShareFile::getSharefilepath, repalcePath(shareListDTO.getFilePath()));
+//            List<ShareFile> list1 = shareFileService.list(fileQueryWrapper);
+//            shareList.addAll(list1);
+//        }
+        List<ShareListVO> shareList = shareService.getShareList(shareListDTO.getFilePath(), shareListDTO.getUserId(), shareListDTO.getCurrentPage(), shareListDTO.getPageCount());
 
+        Map<String, Object> map = new HashMap<>();
+        map.put("total", shareList.size());
+        map.put("list", shareList);
 
-        return null;
+        return RestResult.success().data(map);
     }
 
     @Operation(summary = "其他用户获取某个分享文件列表", description = "用来做前台文件列表展示", tags = { "getsharefilelist" })
@@ -98,12 +117,7 @@ public class ShareController {
         List<UserFile> files = JSONArray.parseArray(shareFileDTO.getFiles(), UserFile.class);
 
         for (UserFile file : files) {
-            UserFile userFile = userfileService.getById(file.getUserFileId());
-            ShareFile shareFile = new ShareFile();
-            shareFile.setSharebatchnum(uuid);
-            shareFile.setSharefilepath(userFile.getFilePath());
-            shareFile.setUserfileid(userFile.getUserFileId());
-            shareFileService.save(shareFile);
+            shareFileService.shareFile(file.getUserFileId(), shareFileDTO.getUserId(), uuid);
         }
 
         shareService.save(share);
@@ -129,4 +143,15 @@ public class ShareController {
         return null;
     }
 
+    public String repalcePath(String path){
+
+        String filePath = path;
+        filePath = filePath.replace("\\", "\\\\\\\\");
+        filePath = filePath.replace("'", "\\'");
+        filePath = filePath.replace("%", "\\%");
+        filePath = filePath.replace("_", "\\_");
+
+        return filePath;
+
+    }
 }

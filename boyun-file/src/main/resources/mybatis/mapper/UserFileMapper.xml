@@ -15,7 +15,7 @@
         WHERE filepath LIKE N'${oldFilePath}%' and userId = #{userId};
     </update>
 
-    <select id="userfileList" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserfileListVO">
+    <select id="userfileList" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserFileListVO">
         select * from boyunfile.userfile as a
         left join boyunfile.file as f on f.fileId = a.fileId
         <where>
@@ -52,7 +52,7 @@
         and userId = #{userId}
         and deleteFlag = 0
     </sql>
-    <select id="selectFileByExtendName" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserfileListVO">
+    <select id="selectFileByExtendName" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserFileListVO">
         select * from boyunfile.userfile
         <include refid="selectByExtendName"></include>
         limit #{beginCount}, #{pageCount}
@@ -63,7 +63,7 @@
         <include refid="selectByExtendName"></include>
     </select>
 
-    <select id="selectFileNotInExtendNames" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserfileListVO">
+    <select id="selectFileNotInExtendNames" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserFileListVO">
         select * from boyunfile.userfile
         <include refid="selectByNotExtendName"></include>
         limit #{beginCount}, #{pageCount}

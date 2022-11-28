@@ -18,7 +18,7 @@ import com.boyun.boyunfile.service.UserService;
 import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.util.DateUtil;
 import com.boyun.boyunfile.vo.TreeNodeVO;
-import com.boyun.boyunfile.vo.UserfileListVO;
+import com.boyun.boyunfile.vo.UserFileListVO;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -73,13 +73,13 @@ public class FileController {
     @Operation(summary = "获取文件列表", description = "用来做前台文件列表展示", tags = { "file" })
     @GetMapping(value = "/getfilelist")
     @ResponseBody
-    public RestResult<UserfileListVO> getUserfileList(UserfileListDTO userfileListDto,
+    public RestResult<UserFileListVO> getUserfileList(UserfileListDTO userfileListDto,
                                                       @RequestHeader("token") String token) {
 
 
         User sessionUser = userService.getUserByToken(token);
 
-        List<UserfileListVO> fileList = userfileService.getUserFileByFilePath(userfileListDto.getFilePath(),
+        List<UserFileListVO> fileList = userfileService.getUserFileByFilePath(userfileListDto.getFilePath(),
                 sessionUser.getUserId(), userfileListDto.getCurrentPage(), userfileListDto.getPageCount());
 
         LambdaQueryWrapper<UserFile> userFileLambdaQueryWrapper = new LambdaQueryWrapper<>();

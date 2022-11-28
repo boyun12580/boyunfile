@@ -29,6 +29,8 @@ public class ShareFile {
     @Column(columnDefinition="bigint(20)")
     private Long userfileid;
 
+    @Column(columnDefinition="int(11) comment '删除标志 0-未删除 1-已删除'")
+    private Integer deleteFlag;
 
 
 }

@@ -13,7 +13,7 @@ import com.boyun.boyunfile.mapper.RecoveryFileMapper;
 import com.boyun.boyunfile.mapper.UserfileMapper;
 import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.util.DateUtil;
-import com.boyun.boyunfile.vo.UserfileListVO;
+import com.boyun.boyunfile.vo.UserFileListVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -28,30 +28,30 @@ import java.util.concurrent.Executors;
 public class UserfileServiceImpl extends ServiceImpl<UserfileMapper, UserFile> implements UserFileService {
 
     @Resource
-    UserfileMapper userfileMapper;
+    private UserfileMapper userfileMapper;
 
     @Resource
-    FileMapper fileMapper;
+    private FileMapper fileMapper;
 
     @Resource
-    RecoveryFileMapper recoveryFileMapper;
+    private RecoveryFileMapper recoveryFileMapper;
 
     public static Executor executor = Executors.newFixedThreadPool(20);
 
     @Override
-    public List<UserfileListVO> getUserFileByFilePath(String filePath, Long userId, Long currentPage, Long pageCount) {
+    public List<UserFileListVO> getUserFileByFilePath(String filePath, Long userId, Long currentPage, Long pageCount) {
         Long beginCount = (currentPage - 1) * pageCount;
         UserFile userfile = new UserFile();
         userfile.setUserId(userId);
         userfile.setFilePath(filePath);
-        List<UserfileListVO> fileList = userfileMapper.userfileList(userfile, beginCount, pageCount);
+        List<UserFileListVO> fileList = userfileMapper.userfileList(userfile, beginCount, pageCount);
         return fileList;
     }
 
     @Override
     public Map<String, Object> getUserFileByType(int fileType, Long currentPage, Long pageCount, Long userId) {
         Long beginCount = (currentPage - 1) * pageCount;
-        List<UserfileListVO> fileList;
+        List<UserFileListVO> fileList;
         Long total;
         if (fileType == FileConstant.OTHER_TYPE) {
 

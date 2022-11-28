@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Schema(description="用户文件列表VO")
-public class UserfileListVO {
+public class UserFileListVO {
     @Schema(description="文件id")
     private Long fileId;
     @Schema(description="时间戳名称")

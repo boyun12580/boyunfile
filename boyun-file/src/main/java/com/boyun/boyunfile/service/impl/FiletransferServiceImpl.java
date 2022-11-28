@@ -28,12 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class FiletransferServiceImpl implements FiletransferService {
 
     @Resource
-    FileMapper fileMapper;
+    private FileMapper fileMapper;
     @Resource
-    UserfileMapper userfileMapper;
+    private UserfileMapper userfileMapper;
 
     @Resource
-    FileOperationFactory localStorageOperationFactory;
+    private FileOperationFactory localStorageOperationFactory;
 
     @Override
     @Transactional

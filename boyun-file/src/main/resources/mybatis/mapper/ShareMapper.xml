@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boyun.boyunfile.mapper.ShareMapper">
+
+    <select id="getShareList" resultType="com.boyun.boyunfile.vo.ShareListVO">
+        select
+            u.userFileId ,
+            u.extendName ,
+            u.fileName ,
+            u.filePath ,
+            u.isDir ,
+            s2.endTime ,
+            s2.shareBatchNum ,
+            s2.shareStatus ,
+            s2.shareTime ,
+            s2.extractionCode ,
+            f.fileSize,
+            f.fileUrl
+
+        from boyunfile.userfile u
+                 left join boyunfile.sharefile s
+                           on s.userFileId = u.userFileId
+                 left join boyunfile.share s2
+                           on s2.shareBatchNum = s.shareBatchNum
+                 left join boyunfile.file f
+                           on u.fileId = f.fileId
+        where u.deleteFlag = 0
+            and s2.userId = #{param2}
+            and s.deleteFlag = 0
+            and s.shareFilePath = #{param1}
+
+        limit #{param3}, #{param4}
+    </select>
+</mapper>
