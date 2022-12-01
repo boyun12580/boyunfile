@@ -117,7 +117,9 @@
       :download="`${item.fileName}.${item.extendName}`"
       :ref="`downloadLink${index}`"
     ></a>
+
   </div>
+
 </template>
 
 <script>
@@ -324,3 +326,4 @@ export default {
   },
 };
 </script>
+

@@ -36,13 +36,14 @@ const routes = [
     }
   },
   {
-    path: '/share/:shareBatchNum',
+    path: '/:shareBatchNum',
     name: 'Share',
     component: () => import(/* webpackChunkName: "share" */ "../views/Share.vue"),
     meta: {
       title: '分享',
-      keepAlive: true
-    }
+      // keepAlive: true
+    },
+    props: true
   },
   {
     path: "*", //  404页面

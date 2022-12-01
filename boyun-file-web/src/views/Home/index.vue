@@ -10,19 +10,23 @@
       <!-- 面包屑导航栏 - 显示文件路径 -->
       <div class="operation-wrapper">
         <OperationMenu
-            :fileType="fileType"
-            :filePath="filePath"
-            :operationFileList="operationFileList"
-            @getTableData="getFileData"
-            @handleUploadFile="handleUploadFile"
-            @handleSelectFile="setOperationFile"
-            @handleMoveFile="setMoveFileDialog"
-            ></OperationMenu>
-          <!-- 3. 使用查看模式切换组件 将 fileType 传递给子组件 -->
-        <ShowModel :fileType="fileType"></ShowModel>
-        <SelectColumn></SelectColumn>
+          :fileType="fileType"
+          :filePath="filePath"
+          :operationFileList="operationFileList"
+          @getTableData="getFileData"
+          @handleUploadFile="handleUploadFile"
+          @handleSelectFile="setOperationFile"
+          @handleMoveFile="setMoveFileDialog"
+        ></OperationMenu>
+        <SelectColumn 
+          :fileType="fileType"
+          :filePath="filePath"
+          @getSearchFileList="getSearchFileList"
+          @getTableDataByType="getFileData"
+        ></SelectColumn>
+            <!-- 查看模式切换组件 将 fileType 传递给子组件 -->
       </div>
-      <BreadCrumb :fileType="fileType"></BreadCrumb>
+      <BreadCrumb :fileType="fileType" :filePath="filePath"></BreadCrumb>
       <!-- 表格组件 v-if 当左侧菜单选择图片且查看模式为"列表"时显示 或 左侧菜单选择的非图片 -->
       <FileTable
         v-if="(fileType === 1 && showModel === 0) || fileType !== 1"
@@ -75,7 +79,7 @@ import BreadCrumb from "./components/BreadCrumb.vue"; //  引入面包屑导航�
 import FileTable from "./components/FileTable.vue"; //  引入文件表格展示区
 import FilePagination from './components/FilePagination.vue' //  引入分页组件
 import SelectColumn from './components/SelectColumn.vue' //  引入控制列显隐组件
-import { getFileListByPath, getFileListByType } from '@/request/file.js' //  引入获取文件列表接口
+import { getFileListByPath, getFileListByType, searchUserFileList } from '@/request/file.js' //  引入获取文件列表接口
 import OperationMenu from './components/OperationMenu.vue' //  引入新建文件组件
 import FileUploader from './components/FileUploader.vue' //  引入文件上传组件
 import { getFileStorage } from '@/request/file.js' //  引入接口
@@ -88,7 +92,7 @@ import FileGrid from './components/FileGrid.vue' //  引入网格组件
 import FileTimeLine from "./components/FileTimeLine.vue"; //  引入时间线模式组件
 import ImgReview from "@/components/ImgReview"; //  引入图片在线查看组件
 import { getRecoveryFileList } from "@/request/recoveryFile.js" // 回收站
-import { getsharelist } from "@/request/share.js" // 获取我的分享文件列表
+import { getShareList } from "@/request/share.js" // 获取我的分享文件列表
 
 export default {
   name: "Home",
@@ -134,7 +138,7 @@ export default {
     },
     // 当前所在路径
     filePath() {
-        return this.$route.query.filePath
+        return this.$route.query.filePath ? this.$route.query.filePath : '/'
     },
     // 查看模式
     showModel() {
@@ -166,7 +170,6 @@ export default {
       this.loading = true; // 打开表格loading状态
       if (this.fileType === 0) {
         // 左侧菜单选择的为 全部 时，根据路径，获取文件列表
-        this.loading = false;
         this.getFileDataByPath();
       } else if(this.fileType === 6){
         this.getRecoveryFileList();
@@ -237,11 +240,12 @@ export default {
 
     // 获取分享文件列表
     getShareFileList(){
-      getsharelist({
-          userId: this.$store.getters.userId,
-          filePath: this.filePath, // 传递当前路径
-          currentPage: this.pageData.currentPage,
-          pageCount: this.pageData.pageCount
+      getShareList({
+        shareBatchnum: this.$route.query.shareBatchNum,
+        userId: this.$store.getters.userId,
+        filePath: this.filePath, // 传递当前路径
+        currentPage: this.pageData.currentPage,
+        pageCount: this.pageData.pageCount
       }).then(
         (res) => {
           this.loading = false //  关闭表格loading状态
@@ -257,6 +261,24 @@ export default {
           console.log(error)
         }
       )
+    },
+
+    // 搜索文件
+    getSearchFileList(fileName){
+      this.loading = true
+			searchUserFileList({
+				currentPage: this.pageData.currentPage,
+				pageCount: this.pageData.pageCount,
+				fileName: fileName
+			}).then((res) => {
+				this.loading = false
+				if (res.success) {
+					this.tableData = res.data.list // 表格数据赋值
+          this.pageData.total = res.data.total //  分页组件 - 文件总数赋值
+				} else {
+					this.$message.error(res.message)
+				}
+			})
     },
 
     // 获取回收站文件列表
@@ -365,6 +387,7 @@ export default {
   // 使用flex布局 菜单居左固定宽度 右侧内容区域自适应宽度
   display: flex;
   width: 100% !important;
+  overflow: hidden;
 
   .home-left {
     height: calc(100vh - 61px);
@@ -377,11 +400,14 @@ export default {
     width: calc(100% - 200px);
     padding: 8px 24px;
     flex: 1;
+    overflow: hidden;
     // padding: 0px 16px !important;
     // overflow: hidden;
   }
 
   .operation-wrapper {
+    overflow: hidden;
+    // margin: 8px 0;
     margin-bottom: 16px;
     display: flex;
     align-items: center;

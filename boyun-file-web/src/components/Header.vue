@@ -78,6 +78,7 @@ export default {
 @import '~@/assets/style/varibles.styl';
 
 .header-wrapper {
+  overflow: hidden;
   width: 100%;
   // padding: 0 20px;
   box-shadow: $tabBoxShadow;

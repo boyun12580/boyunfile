@@ -212,7 +212,7 @@ export default {
     return {
       isDrawer: false, //  控制移动端菜单抽屉是否显示
       isCollapse: false,
-      storageMaxValue: Math.pow(1024, 3) * 1, //  最大存储容量，1GB
+      storageMaxValue: Math.pow(1024, 3) * 20, //  最大存储容量，20GB
       //  自定义进度条颜色，不同占比，进度条颜色不同
       storageColor: [
         { color: '#67C23A', percentage: 50 },

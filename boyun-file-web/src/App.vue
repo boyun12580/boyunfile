@@ -15,5 +15,10 @@ export default {
   components: {
     Header,
   },
+
 };
 </script>
+
+<style lang="stylus" scoped>
+
+</style>

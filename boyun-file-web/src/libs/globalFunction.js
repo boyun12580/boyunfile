@@ -8,7 +8,6 @@ export default function install(Vue) {
         if (fileUrl) {
             let index = fileUrl.lastIndexOf(".");
             fileUrl = config.staticContext + fileUrl.substr(0, index) + "_min" + fileUrl.substr(index);
-
             // fileUrl = fileUrl.substr(0, index) + "_min" + fileUrl.substr(index);
         }
         return fileUrl;

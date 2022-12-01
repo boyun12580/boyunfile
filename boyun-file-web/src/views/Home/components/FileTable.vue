@@ -24,7 +24,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="fileName" label="文件名" key="fileName">
+      <el-table-column
+        prop="fileName"
+        label="文件名"
+        key="fileName"
+        sortable
+        :sort-by="['fileName']"
+      >
         <template slot-scope="scope">
           <div style="cursor: pointer" @click="handleFileNameClick(scope.row)" v-if="fileType != 6">
             {{
@@ -59,7 +65,7 @@
         prop="filePath"
         key="filePath"
         show-overflow-tooltip
-        v-if="fileType !== 0 && fileType !== 8 && screenWidth > 768"
+        v-if="fileType > 0 && fileType < 7 && screenWidth > 768"
       >
         <template slot-scope="scope">
           <div
@@ -81,6 +87,8 @@
         label="类型"
         width="100"
         key="extendName"
+        sortable
+        :sort-by="['extendName']"
         v-if="selectedColumnList.includes('extendName') && screenWidth > 768"
       >
           <template slot-scope="scope">
@@ -100,7 +108,21 @@
               <span>{{ calculateFileSize(scope.row.fileSize) }}</span>
         </template>
       </el-table-column>
-      <!-- 通过 v-if 来控制 修改日期 列是否显示 -->
+      
+      <el-table-column
+        prop="shareType"
+        label="分享类型"
+        width="100"
+        key="shareType"
+        :sort-by="['shareType']"
+        sortable
+        v-if="fileType == 8 && screenWidth > 768"
+      >
+        <template slot-scope="scope">
+              <span>{{ scope.row.shareType == 0 ? '公共' : '私密' }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column
         prop="uploadTime"
         label="修改日期"
@@ -108,7 +130,7 @@
         key="uploadTime"
         :sort-by="['uploadTime']"
         sortable
-        v-if="selectedColumnList.includes('uploadTime') && fileType !== 8 && screenWidth > 768"
+        v-if="selectedColumnList.includes('uploadTime') && fileType !== 8 && fileType !== 7 && screenWidth > 768"
       >
       </el-table-column>
 
@@ -130,7 +152,7 @@
         key="shareTime"
         :sort-by="['shareTime']"
         sortable
-        v-if="fileType == 8 && screenWidth > 768"
+        v-if="(fileType == 7 || fileType == 8) && screenWidth > 768"
       >
       </el-table-column>
 
@@ -143,6 +165,16 @@
         sortable
         v-if="fileType == 8 && screenWidth > 768"
       >
+        <template slot-scope="scope">
+					<div>
+						<i
+							class="el-icon-error"
+							v-if="getFileShareStatus(scope.row.endTime)"
+						></i>
+						<i class="el-icon-time" v-else></i>
+						{{ scope.row.endTime }}
+					</div>
+				</template>
       </el-table-column>
   
       <!-- 表格操作列 自定义表格头，原有的 label="操作" 需要删除，宽度动态变化 -->
@@ -183,15 +215,19 @@
               <el-dropdown-item @click.native="handleClickDeleteShareFile(scope.row)" v-if="fileType == 8 && scope.row.filePath == '/'"
                 >取消分享</el-dropdown-item
               >
-              <!-- 操作列收缩状态下的下载按钮 -->
-            <el-dropdown-item v-if="scope.row.isDir === 0 && fileType >= 0 && fileType <= 5">
-                <a
-                  :href="`/api/filetransfer/downloadfile?userFileId=${scope.row.userFileId}`"
-                  target="_blank"
-                  style="display: block; color: inherit"
-                  >下载</a
-                >
-            </el-dropdown-item>
+
+              <el-dropdown-item @click.native="" v-if="scope.row.isDir === 1 && fileType == 7"
+                >查看</el-dropdown-item
+              >
+
+              <el-dropdown-item v-if="scope.row.isDir === 0 && (fileType >= 0 && fileType <= 5 || fileType == 7)">
+                  <a
+                    :href="`/api/filetransfer/downloadfile?userFileId=${scope.row.userFileId}`"
+                    target="_blank"
+                    style="display: block; color: inherit"
+                    >下载</a
+                  >
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -302,7 +338,7 @@ export default {
 			})
     },
     handleClickDeleteShareFile(row){
-
+      alert('?')
     },
 
     // 还原文件
@@ -423,12 +459,25 @@ export default {
     handleFileNameClick(row) {
         //  若是目录则进入目录
         if (row.isDir) {
+
+          // 若当前进入的文件夹为分享区，进入子目录需携带标记参数
+          if(this.fileType === 8){
             this.$router.push({
                 query: {
                   fileType: this.fileType,
-                  filePath: `${row.filePath}${row.fileName}/`
+                  filePath: `${row.filePath}${row.fileName}/`,
+                  shareBatchNum: row.shareBatchNum,
                 }
             })
+          }else{
+            this.$router.push({
+                query: {
+                  fileType: this.fileType,
+                  filePath: `${row.filePath}${row.fileName}/`,
+                }
+            })
+          }
+
         } else {
             //  若当前点击项是图片
             const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
@@ -465,6 +514,18 @@ export default {
         } else {
             return (size / GB).toFixed(3) + 'TB'
         }
+    },
+    /**
+	 * 获取文件分享过期状态
+	 * @param {string} time 日期
+	 * @returns {boolean} 是否过期
+	 */
+    getFileShareStatus(time) {
+      if (new Date(time).getTime() > new Date().getTime()) {
+        return false
+      } else {
+        return true
+      }
     },
     // 移动按钮 - 点击事件
     handleClickMove(row) {
@@ -528,6 +589,7 @@ export default {
 @import '~@/assets/style/mixins.styl';
 
 .file-table-wrapper {
+  overflow: hidden;
   margin-top: 2px;
 
   .file-type-0 {
@@ -591,9 +653,9 @@ export default {
         }
       }
 
-      .el-icon-warning {
+      .el-icon-error {
         font-size: 16px;
-        color: $Warning;
+        color: $Danger;
       }
 
       .el-icon-time {

@@ -26,3 +26,6 @@ export const renameFile = (p) => post('/file/renamefile', p)
 export const batchDeleteFile = (p) => post("/file/batchdeletefile", p);
 // 批量移动文件
 export const batchMoveFile = (p) => post("/file/batchmovefile", p);
+
+// 搜索文件
+export const searchUserFileList = (p) => get("/file/search", p);
