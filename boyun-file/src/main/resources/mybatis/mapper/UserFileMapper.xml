@@ -84,4 +84,20 @@
         where userfile.deleteBatchNum = #{deleteBatchNum} and deleteFlag = 1
     </select>
 
+    <select id="searchUserFileList" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserFileListVO">
+        select * from boyunfile.userfile as a
+        left join boyunfile.file as f on f.fileId = a.fileId
+        <where>
+            and a.deleteFlag = 0
+            <if test="userfile.userId != null">
+                and a.userId = #{userfile.userId}
+            </if>
+            <if test="userfile.fileName != null">
+                and a.fileName like concat('%', #{userfile.fileName}, '%')
+            </if>
+        </where>
+        ORDER BY isDir desc
+        limit #{beginCount}, #{pageCount}
+    </select>
+
 </mapper>

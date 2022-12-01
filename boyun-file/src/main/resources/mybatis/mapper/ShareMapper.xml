@@ -9,10 +9,11 @@
             u.userFileId ,
             u.extendName ,
             u.fileName ,
-            u.filePath ,
             u.isDir ,
+            s.shareFilePath as filePath,
             s2.endTime ,
             s2.shareBatchNum ,
+            s2.shareType ,
             s2.shareStatus ,
             s2.shareTime ,
             s2.extractionCode ,
@@ -29,8 +30,53 @@
         where u.deleteFlag = 0
             and s2.userId = #{param2}
             and s.deleteFlag = 0
+          <if test="param1 != null">
             and s.shareFilePath = #{param1}
-
+          </if>
+        <if test="param5 != null">
+            and s.shareBatchNum = #{param5}
+        </if>
+        order by s2.endTime desc
         limit #{param3}, #{param4}
+
+    </select>
+    <select id="getShareFileList" resultType="com.boyun.boyunfile.vo.ShareListVO">
+        select
+        u.userFileId ,
+        u.extendName ,
+        u.fileName ,
+        u.isDir ,
+        s.shareFilePath as filePath,
+        s2.endTime ,
+        s2.shareBatchNum ,
+        s2.shareType ,
+        s2.shareStatus ,
+        s2.shareTime ,
+        s2.extractionCode ,
+        f.fileSize,
+        f.fileUrl
+
+        from boyunfile.userfile u
+        left join boyunfile.sharefile s
+        on s.userFileId = u.userFileId
+        left join boyunfile.share s2
+        on s2.shareBatchNum = s.shareBatchNum
+        left join boyunfile.file f
+        on u.fileId = f.fileId
+        where u.deleteFlag = 0
+        and s.deleteFlag = 0
+        <if test="param1 != null">
+            and s.shareFilePath = #{param1}
+        </if>
+        <if test="param2 != null">
+            and s.shareBatchNum = #{param2}
+        </if>
+    </select>
+    <select id="countShareFile" resultType="java.lang.Integer">
+        select count(*)
+        from boyunfile.sharefile s1
+        left join boyunfile.share s2 on s1.shareBatchNum = s2.shareBatchNum
+        where s2.userId = #{param1}
+        and s1.shareFilePath = #{param2}
     </select>
 </mapper>

@@ -19,8 +19,13 @@ public class ShareServiceImpl extends ServiceImpl<ShareMapper, Share> implements
     private ShareMapper shareMapper;
 
     @Override
-    public List<ShareListVO> getShareList(String filePath, Long userId, Long currentPage, Long pageCount) {
+    public List<ShareListVO> getShareList(String filePath, Long userId, Long currentPage, Long pageCount, String shareBatchnum) {
 
-        return shareMapper.getShareList(filePath, userId, (currentPage - 1) * pageCount, pageCount);
+        return shareMapper.getShareList(filePath, userId, (currentPage - 1) * pageCount, pageCount, shareBatchnum);
+    }
+
+    @Override
+    public List<ShareListVO> getShareFileList(String filePath, String shareBatchnum) {
+        return shareMapper.getShareFileList(filePath, shareBatchnum);
     }
 }

@@ -17,6 +17,6 @@ public interface UserfileMapper extends BaseMapper<UserFile> {
     void updateFilepathByFilepath(String oldfilePath, String newfilePath, Long userId);
     void replaceFilePath(@Param("filePath") String filePath, @Param("oldFilePath") String oldFilePath, @Param("userId") Long userId);
     Long selectStorageSizeByUserId(Long userId);
-
+    List<UserFileListVO> searchUserFileList(UserFile userfile, Long beginCount, Long pageCount);
     List<UserFile> selectRecoveryFile(String deleteBatchNum);
 }

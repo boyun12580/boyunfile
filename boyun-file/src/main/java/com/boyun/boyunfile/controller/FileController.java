@@ -73,7 +73,7 @@ public class FileController {
     @Operation(summary = "获取文件列表", description = "用来做前台文件列表展示", tags = { "file" })
     @GetMapping(value = "/getfilelist")
     @ResponseBody
-    public RestResult<UserFileListVO> getUserfileList(UserfileListDTO userfileListDto,
+    public RestResult<UserFileListVO> getUserfileList(UserFileListDTO userfileListDto,
                                                       @RequestHeader("token") String token) {
 
 
@@ -90,6 +90,26 @@ public class FileController {
         Map<String, Object> map = new HashMap<>();
         map.put("total", total);
         map.put("list", fileList);
+
+        return RestResult.success().data(map);
+
+    }
+
+    @Operation(summary = "搜索列表", description = "搜索列表", tags = { "file" })
+    @GetMapping(value = "/search")
+    @ResponseBody
+    public RestResult<UserFileListVO> searchUserFileList(SearchUserFileDTO searchUserFileDTO,
+                                                         @RequestHeader("token") String token) {
+
+        User sessionUser = userService.getUserByToken(token);
+        List<UserFileListVO> list = userfileService.searchUserFileList(searchUserFileDTO.getFileName(), sessionUser.getUserId(),
+                searchUserFileDTO.getCurrentPage(), searchUserFileDTO.getPageCount());
+
+
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("total", list.size());
+        map.put("list", list);
 
         return RestResult.success().data(map);
 

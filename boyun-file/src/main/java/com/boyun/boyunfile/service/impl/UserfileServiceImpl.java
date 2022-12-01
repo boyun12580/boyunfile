@@ -194,6 +194,16 @@ public class UserfileServiceImpl extends ServiceImpl<UserfileMapper, UserFile> i
         userfileMapper.replaceFilePath(filePath, oldFilePath, userId);
     }
 
+    @Override
+    public List<UserFileListVO> searchUserFileList(String fileName, Long userId, Long currentPage, Long pageCount) {
+        Long beginCount = (currentPage - 1) * pageCount;
+        UserFile userfile = new UserFile();
+        userfile.setUserId(userId);
+        userfile.setFileName(fileName);
+        List<UserFileListVO> fileList = userfileMapper.searchUserFileList(userfile, beginCount, pageCount);
+        return fileList;
+    }
+
     //    删除目录时需要将该文件目录下的所有文件都放入回收站，而代码实现则是通过一个删除标志来实现，
 //    为了防止文件目录下文件特别多，因此这里需要创建一个新的线程去执行，防止出现阻塞
     private void updateFileDeleteStateByFilePath(String filePath, String deleteBatchNum, Long userId) {

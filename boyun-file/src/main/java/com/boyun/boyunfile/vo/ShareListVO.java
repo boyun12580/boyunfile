@@ -3,6 +3,8 @@ package com.boyun.boyunfile.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import javax.persistence.Column;
+
 @Data
 @Schema(description="获取我的分享文件列表VO")
 public class ShareListVO {
@@ -13,6 +15,10 @@ public class ShareListVO {
     private String fileUrl;
     @Schema(description="文件大小")
     private Long fileSize;
+
+    //分享类型(0公共,1私密,2好友)
+    @Schema(description="分享类型")
+    private Integer shareType;
 
     @Schema(description="文件名")
     private String fileName;

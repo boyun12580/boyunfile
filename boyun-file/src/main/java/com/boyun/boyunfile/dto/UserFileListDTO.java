@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Schema(name = "文件列表DTO",required = true)
-public class UserfileListDTO {
+public class UserFileListDTO {
     @Schema(description = "文件路径")
     private String filePath;
     @Schema(description = "当前页码")

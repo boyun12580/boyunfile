@@ -2,16 +2,18 @@ package com.boyun.boyunfile.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.boyun.boyunfile.common.RestResult;
 import com.boyun.boyunfile.constant.ShareConstant;
 import com.boyun.boyunfile.domain.Share;
 import com.boyun.boyunfile.domain.ShareFile;
 import com.boyun.boyunfile.domain.UserFile;
+import com.boyun.boyunfile.dto.CheckShareCodeDTO;
 import com.boyun.boyunfile.dto.ShareFileDTO;
+import com.boyun.boyunfile.dto.ShareFileListDTO;
 import com.boyun.boyunfile.dto.ShareListDTO;
 import com.boyun.boyunfile.service.ShareFileService;
 import com.boyun.boyunfile.service.ShareService;
-import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.util.DateUtil;
 import com.boyun.boyunfile.vo.ShareListVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,10 +61,16 @@ public class ShareController {
 //            List<ShareFile> list1 = shareFileService.list(fileQueryWrapper);
 //            shareList.addAll(list1);
 //        }
-        List<ShareListVO> shareList = shareService.getShareList(shareListDTO.getFilePath(), shareListDTO.getUserId(), shareListDTO.getCurrentPage(), shareListDTO.getPageCount());
+        List<ShareListVO> shareList = shareService.getShareList(shareListDTO.getFilePath(),
+                shareListDTO.getUserId(),
+                shareListDTO.getCurrentPage(),
+                shareListDTO.getPageCount(),
+                shareListDTO.getShareBatchnum());
+
+        int total = shareFileService.countShareFile(shareListDTO.getUserId(), shareListDTO.getFilePath());
 
         Map<String, Object> map = new HashMap<>();
-        map.put("total", shareList.size());
+        map.put("total", total);
         map.put("list", shareList);
 
         return RestResult.success().data(map);
@@ -71,9 +79,12 @@ public class ShareController {
     @Operation(summary = "其他用户获取某个分享文件列表", description = "用来做前台文件列表展示", tags = { "getsharefilelist" })
     @GetMapping(value = "/getsharefilelist")
     @ResponseBody
-    public RestResult getShareFileList() {
-        //todo
-        return null;
+    public RestResult getShareFileList(ShareFileListDTO shareFileListDTO) {
+        List<ShareListVO> shareFileList = shareService.getShareFileList(shareFileListDTO.getFilePath(), shareFileListDTO.getShareBatchNum());
+        Map<String, Object> map = new HashMap<>();
+        map.put("total", shareFileList.size());
+        map.put("list", shareFileList);
+        return RestResult.success().data(map);
     }
 
     @Operation(summary = "分享文件", description = "分享文件", tags = { "sharefile" })
@@ -109,7 +120,7 @@ public class ShareController {
             map.replace("extractionCode", "", extractionCode);
         }
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        share.setShareBatchnum(uuid);
+        share.setShareBatchNum(uuid);
         share.setShareTime(DateUtil.getCurrentTime());
         share.setShareStatus(ShareConstant.NOMALTIME);
 
@@ -125,6 +136,54 @@ public class ShareController {
         map.put("shareBatchNum", uuid);
 
         return RestResult.success().message("分享成功").data(map);
+    }
+
+    @Operation(summary = "校验分享链接过期时间", tags = { "checkendtime" })
+    @GetMapping(value = "/checkendtime")
+    @ResponseBody
+    public RestResult checkEndTime(String shareBatchNum) {
+
+        QueryWrapper<Share> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("shareBatchNum", shareBatchNum);
+        queryWrapper.select("shareStatus");
+        Share share = shareService.getOne(queryWrapper);
+
+        Map<String, Integer> map = new HashMap<>();
+        map.put("shareStatus", share.getShareStatus());
+
+        return RestResult.success().data(map);
+    }
+
+    @Operation(summary = "校验分享类型", tags = { "checksharetype" })
+    @GetMapping(value = "/checksharetype")
+    @ResponseBody
+    public RestResult checkShareType(String shareBatchNum) {
+        QueryWrapper<Share> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("shareBatchNum", shareBatchNum);
+        queryWrapper.select("shareType");
+        Share share = shareService.getOne(queryWrapper);
+
+        Map<String, Integer> map = new HashMap<>();
+        map.put("shareType", share.getShareType());
+
+        return RestResult.success().data(map);
+    }
+
+    @Operation(summary = "校验分享文件提取码", description = "校验分享文件提取码", tags = { "checksharecode" })
+    @GetMapping(value = "/checksharecode")
+    @ResponseBody
+    public RestResult checkShareCode(CheckShareCodeDTO checkShareCodeDTO) {
+
+        LambdaQueryWrapper<Share> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Share::getShareBatchNum, checkShareCodeDTO.getShareBatchNum())
+                .eq(Share::getShareStatus, Share.NOMALTIME);
+        Share share = shareService.getOne(queryWrapper);
+
+        if(share.getExtractionCode().equals(checkShareCodeDTO.getExtractionCode())){
+            return RestResult.success();
+        }else{
+            return RestResult.fail().message("提取码错误");
+        }
     }
 
     @Operation(summary = "取消分享文件", description = "取消分享文件", tags = { "deleteshare" })

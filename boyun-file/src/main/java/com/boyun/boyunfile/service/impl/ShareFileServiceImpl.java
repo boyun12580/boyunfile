@@ -8,6 +8,7 @@ import com.boyun.boyunfile.domain.RecoveryFile;
 import com.boyun.boyunfile.domain.ShareFile;
 import com.boyun.boyunfile.domain.UserFile;
 import com.boyun.boyunfile.mapper.ShareFileMapper;
+import com.boyun.boyunfile.mapper.ShareMapper;
 import com.boyun.boyunfile.mapper.UserfileMapper;
 import com.boyun.boyunfile.service.ShareFileService;
 import com.boyun.boyunfile.util.DateUtil;
@@ -27,6 +28,9 @@ public class ShareFileServiceImpl extends ServiceImpl<ShareFileMapper, ShareFile
     private ShareFileMapper shareFileMapper;
 
     @Resource
+    private ShareMapper shareMapper;
+
+    @Resource
     private UserfileMapper userfileMapper;
 
     public static Executor executor = Executors.newFixedThreadPool(20);
@@ -38,16 +42,21 @@ public class ShareFileServiceImpl extends ServiceImpl<ShareFileMapper, ShareFile
 
         if (userFile.getIsDir() == 1) {
             String filePath = userFile.getFilePath() + userFile.getFileName() + "/";
-            shareFileByFilePath(filePath, shareBatchnum, userId);
+            shareFileByFilePath(filePath, shareBatchnum, userId, userFile.getFilePath());
         }
 
         ShareFile shareFile = new ShareFile();
         shareFile.setSharebatchnum(shareBatchnum);
-        shareFile.setSharefilepath(userFile.getFilePath());
+        shareFile.setSharefilepath("/");
         shareFile.setUserfileid(userFile.getUserFileId());
         shareFileMapper.insert(shareFile);
 
 
+    }
+
+    @Override
+    public Integer countShareFile(Long userId, String filePath) {
+        return shareMapper.countShareFile(userId, filePath);
     }
 
     @Override
@@ -67,7 +76,7 @@ public class ShareFileServiceImpl extends ServiceImpl<ShareFileMapper, ShareFile
         return userfileMapper.selectList(lambdaQueryWrapper);
     }
 
-    private void shareFileByFilePath(String shareFilePath, String shareBatchnum, Long userId) {
+    private void shareFileByFilePath(String shareFilePath, String shareBatchnum, Long userId, String originFilePath) {
         new Thread(()->{
             List<UserFile> fileList = selectShareFileTreeListLikeFilePath(shareFilePath, userId);
             for (int i = 0; i < fileList.size(); i++){
@@ -76,7 +85,7 @@ public class ShareFileServiceImpl extends ServiceImpl<ShareFileMapper, ShareFile
                     //标记分享
                     ShareFile shareFile = new ShareFile();
                     shareFile.setSharebatchnum(shareBatchnum);
-                    shareFile.setSharefilepath(userFileTemp.getFilePath());
+                    shareFile.setSharefilepath(userFileTemp.getFilePath().replaceFirst(originFilePath,"/"));
                     shareFile.setUserfileid(userFileTemp.getUserFileId());
                     shareFileMapper.insert(shareFile);
 

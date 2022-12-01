@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.boyun.boyunfile.domain.File;
 import com.boyun.boyunfile.domain.UserFile;
 import com.boyun.boyunfile.dto.DownloadFileDTO;
+import com.boyun.boyunfile.dto.PreviewDTO;
 import com.boyun.boyunfile.dto.UploadFileDTO;
 import com.boyun.boyunfile.factory.FileOperationFactory;
 import com.boyun.boyunfile.mapper.FileMapper;
@@ -21,10 +22,12 @@ import com.boyun.boyunfile.operation.upload.domain.UploadFile;
 import com.boyun.boyunfile.service.FiletransferService;
 import com.boyun.boyunfile.util.DateUtil;
 import com.boyun.boyunfile.util.PropertiesUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class FiletransferServiceImpl implements FiletransferService {
 
     @Resource
@@ -110,5 +113,10 @@ public class FiletransferServiceImpl implements FiletransferService {
     @Override
     public Long selectStorageSizeByUserId(Long userId) {
         return userfileMapper.selectStorageSizeByUserId(userId);
+    }
+
+    @Override
+    public void previewPictureFile(HttpServletResponse httpServletResponse, PreviewDTO previewDTO) {
+
     }
 }

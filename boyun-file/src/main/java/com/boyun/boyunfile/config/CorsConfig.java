@@ -22,6 +22,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/**")
                 .excludePathPatterns("/filetransfer/downloadfile")
-                .excludePathPatterns("/upload/**");
+                .excludePathPatterns("/upload/**")
+                .excludePathPatterns("/share/**");
     }
 }

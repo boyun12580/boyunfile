@@ -15,5 +15,7 @@ public class ShareListDTO {
     private Long currentPage;
     @Schema(description = "一页显示数量")
     private Long pageCount;
+    @Schema(description = "分享批次号")
+    private String shareBatchnum;
 
 }

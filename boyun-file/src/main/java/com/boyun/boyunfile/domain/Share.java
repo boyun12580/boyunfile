@@ -40,7 +40,7 @@ public class Share  {
     private String extractionCode;
     //分享批次号
     @Column(columnDefinition="varchar(40)")
-    private String shareBatchnum;
+    private String shareBatchNum;
     //分享状态(0正常,1已失效,2已撤销)
     @Column(columnDefinition="int")
     private Integer shareStatus;
