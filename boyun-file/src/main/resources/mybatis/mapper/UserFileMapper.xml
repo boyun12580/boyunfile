@@ -30,7 +30,7 @@
             </if>
             and a.deleteFlag = 0
         </where>
-        ORDER BY isDir desc
+        ORDER BY isDir desc, a.userFileId
         limit #{beginCount}, #{pageCount}
     </select>
 
