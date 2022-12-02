@@ -1,7 +1,10 @@
 <template>
   <div class="move-dialog-wrapper">
     <!-- 移动文件-选择目录模态框 -->
-    <el-dialog title="选择目录" :visible.sync="dialogMoveFile.visible">
+    <el-dialog title="选择目录"
+      :width="screenWidth <= 520 ? '300px' : '500px'"
+      :visible.sync="dialogMoveFile.visible"
+    >
       <div class="el-dialog-div">
         <el-tree
           :data="dialogMoveFile.fileTree"
@@ -43,6 +46,12 @@ export default {
         : "/";
       this.$emit("setSelectFilePath", selectFilePath);
     },
+  },
+  computed: {
+    // 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
+		},
   },
 };
 </script>

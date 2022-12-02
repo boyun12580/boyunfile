@@ -46,7 +46,7 @@ export default {
 <style lang="stylus" scoped>
 // 分页组件内容居右显示
 .file-pagination {
-  margin-top: 16px;
+  // margin-top: 16px;
   text-align: right;
 }
 </style>

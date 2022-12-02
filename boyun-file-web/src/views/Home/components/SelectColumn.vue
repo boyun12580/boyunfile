@@ -22,7 +22,7 @@
 			></i>
     </el-input>
 
-    <el-divider direction="vertical"></el-divider>
+    <el-divider direction="vertical" v-if="fileType === 0"></el-divider>
     <i
 			class="refresh-icon el-icon-refresh"
 			title="刷新文件列表"
@@ -32,7 +32,6 @@
     <!-- 操作栏收纳 -->
 		<el-popover
 			placement="bottom"
-			:trigger="screenWidth <= 768 ? 'manual' : 'hover'"
 		>
       <i
 				slot="reference"
@@ -43,7 +42,6 @@
         <div
           class="text"
           @click="handleClickSelectColumn"
-          v-if="screenWidth > 768"
         >
         <i class="el-icon-s-operation"></i>
         设置显示字段</div>

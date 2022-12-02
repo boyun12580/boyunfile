@@ -1,6 +1,6 @@
 export default {
     state: {
-        allColumnList: ["extendName", "fileSize", "uploadTime"], // 所有可供选择的表格列
+        allColumnList: ["extendName", "fileSize", "uploadTime", "deleteTime"], // 所有可供选择的表格列
         selectedColumnList: sessionStorage.getItem("selectedColumnList"), //  需要显示的表格列
         showModel: sessionStorage.getItem('showModel'), //  查看模式 - 0 列表 | 1 网格 | 2 时间线
     },

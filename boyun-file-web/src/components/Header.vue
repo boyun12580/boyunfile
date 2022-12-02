@@ -80,12 +80,12 @@ export default {
 .header-wrapper {
   overflow: hidden;
   width: 100%;
-  // padding: 0 20px;
+  padding: 0 20px;
   box-shadow: $tabBoxShadow;
   display: flex;
 
   .logo {
-    margin: 12px 24px 0 24px;
+    padding: 8px 24px 0 24px;
     display: inline-block;
     height: 40px;
     cursor: pointer;
@@ -111,6 +111,11 @@ export default {
 
     .login, .register, .username, .exit {
       float: right;
+    }
+
+    .el-menu-item{
+      height: 46px;
+      line-height: 50px;
     }
   }
 }

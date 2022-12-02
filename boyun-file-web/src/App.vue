@@ -21,4 +21,11 @@ export default {
 
 <style lang="stylus" scoped>
 
+#app {
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: none;
+  overflow-y: auto;
+}
+
 </style>

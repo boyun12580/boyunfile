@@ -6,10 +6,11 @@
       <SideMenu class="home-left" :storageValue="storageValue"></SideMenu>
     </el-aside>
     <!-- 右侧内容区 -->
-    <div class="home-right">
+    <div :class="{'home-right-isMin': screenWidth <= 768, 'home-right-isMax': screenWidth > 768}">
       <!-- 面包屑导航栏 - 显示文件路径 -->
-      <div class="operation-wrapper">
+      <div :class="{'operation-wrapper-isMin': screenWidth <= 768, 'operation-wrapper-isMax': screenWidth > 768}">
         <OperationMenu
+          class="operation-menu"
           :fileType="fileType"
           :filePath="filePath"
           :operationFileList="operationFileList"
@@ -23,6 +24,7 @@
           :filePath="filePath"
           @getSearchFileList="getSearchFileList"
           @getTableDataByType="getFileData"
+          v-if="screenWidth > 768 || (screenWidth <= 768 && fileType === 0)"
         ></SelectColumn>
             <!-- 查看模式切换组件 将 fileType 传递给子组件 -->
       </div>
@@ -50,6 +52,7 @@
         :loading="loading"
       ></FileTimeLine>
       <FilePagination
+        :style="screenWidth <= 768 && fileType !== 0 ? 'padding-top: 18px;': ''"
         :pageData="pageData"
         @changePageData="changePageData"
         v-if="fileType != 6"
@@ -144,6 +147,10 @@ export default {
     showModel() {
       return this.$store.getters.showModel
     },
+    // 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
+		},
   },
   watch: {
     fileType() {
@@ -158,6 +165,7 @@ export default {
   },
   mounted() {
     this.getFileData() //  获取文件列表
+    
   },
   methods: {
     // 上传文件 按钮点击事件
@@ -395,7 +403,7 @@ export default {
     box-sizing: border-box;
   }
 
-  .home-right {
+  .home-right-isMax {
     box-sizing: border-box;
     width: calc(100% - 200px);
     padding: 8px 24px;
@@ -405,7 +413,17 @@ export default {
     // overflow: hidden;
   }
 
-  .operation-wrapper {
+  .home-right-isMin {
+    box-sizing: border-box;
+    width: calc(100% - 200px);
+    padding: 8px 4px;
+    flex: 1;
+    overflow: hidden;
+    // padding: 0px 16px !important;
+    // overflow: hidden;
+  }
+
+  .operation-wrapper-isMax {
     overflow: hidden;
     // margin: 8px 0;
     margin-bottom: 16px;
@@ -414,9 +432,23 @@ export default {
     justify-content: space-between;
 
     // 左侧菜单按钮组 样式调整
-    >>> .operation-menu-wrapper {
-        flex: 1;
-    }
-}
+      >>> .operation-menu-wrapper {
+          flex: 1;
+      }
+  }
+
+  .operation-wrapper-isMin {
+    overflow: hidden;
+    // margin: 8px 0;
+    // display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    // 左侧菜单按钮组 样式调整
+      >>> .operation-menu-wrapper {
+          flex: 1;
+          margin: 6px 0 6px;
+      }
+  }
 }
 </style>

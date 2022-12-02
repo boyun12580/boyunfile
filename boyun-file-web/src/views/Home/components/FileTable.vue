@@ -5,8 +5,8 @@
       class="file-table"
       :data="tableData"
       fit
+      ref="multipleTable"
       v-loading="loading"
-      @sort-change="handleSortChange"
       @selection-change="handleSelectRow"
     >
       <!-- 勾选框 -->
@@ -15,7 +15,7 @@
         width="56"
         align="center"
         :selectable="selectEnable"
-        v-if="fileType != 8"
+        v-if="fileType < 7"
       ></el-table-column>
 
       <el-table-column label prop="isDir" :width="screenWidth <= 768 ? 40 : 56" align="center" key="isDir">
@@ -48,8 +48,30 @@
           </div>
           
           <div class="file-info" v-if="screenWidth <= 768">
-            {{ scope.row.uploadTime }}
-            <span class="file-size">
+            <div v-if="(fileType >= 0 && fileType <= 5)">
+              {{ scope.row.uploadTime }}
+            </div>
+            <div v-if="(fileType === 6)">
+              {{ scope.row.deleteTime }}
+            </div>
+            <div v-if="(fileType > 6)">
+              <div>
+                {{
+                scope.row.isDir === 0
+                  ? calculateFileSize(scope.row.fileSize)
+                  : ''
+              }}
+                {{ scope.row.endTime }}
+                <i
+                  class="el-icon-error"
+                  v-if="getFileShareStatus(scope.row.endTime)"
+                ></i>
+                <i class="el-icon-time" v-else></i>
+                
+              </div>
+              
+            </div>
+            <span class="file-size" v-if="(fileType !== 8)">
               {{
                 scope.row.isDir === 0
                   ? calculateFileSize(scope.row.fileSize)
@@ -59,6 +81,59 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column
+				label=""
+				key="operation"
+				width="48"
+				v-if="screenWidth <= 768"
+			>
+				<template slot-scope="scope">
+          <el-dropdown trigger="click">
+                <span class="el-dropdown-link">
+                  <i class="el-icon-more" style="transform: rotate(90deg);"></i>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="handleClickDelete(scope.row)" v-if="fileType >= 0 && fileType <= 5"
+                      >删除</el-dropdown-item
+                    >
+                    <el-dropdown-item @click.native="handleClickMove(scope.row)" v-if="fileType >= 0 && fileType <= 5"
+                      >移动</el-dropdown-item
+                    >
+                    <el-dropdown-item @click.native="handleClickRename(scope.row)" v-if="fileType >= 0 && fileType <= 5"
+                      >重命名</el-dropdown-item
+                    >
+                    <el-dropdown-item @click.native="handleClickShareFile(scope.row)" v-if="fileType >= 0 && fileType <= 5"
+                      >分享</el-dropdown-item
+                    >
+                    <el-dropdown-item @click.native="handleClickRecoveryFile(scope.row)" v-if="fileType == 6"
+                      >还原</el-dropdown-item
+                    >
+                    <el-dropdown-item @click.native="handleClickDeleteRecoveryFile(scope.row)" v-if="fileType == 6"
+                      >删除</el-dropdown-item
+                    >
+                    <el-dropdown-item @click.native="handleClickShareFileInfo(scope.row)" v-if="fileType == 8"
+                      >查看分享</el-dropdown-item
+                    >
+                    <el-dropdown-item @click.native="handleClickDeleteShareFile(scope.row)" v-if="fileType == 8 && scope.row.filePath == '/'"
+                      >取消分享</el-dropdown-item
+                    >
+
+                    <el-dropdown-item @click.native="" v-if="scope.row.isDir === 1 && fileType == 7"
+                      >查看</el-dropdown-item
+                    >
+
+                    <el-dropdown-item v-if="scope.row.isDir === 0 && (fileType >= 0 && fileType <= 5 || fileType == 7)">
+                        <a
+                          :href="`/api/filetransfer/downloadfile?userFileId=${scope.row.userFileId}`"
+                          target="_blank"
+                          style="display: block; color: inherit"
+                          >下载</a
+                        >
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </span>
+              </el-dropdown>
+				</template>
+			</el-table-column>
       
       <el-table-column
         :label="fileType === 6 ? '原路径' : '所在路径'"
@@ -232,6 +307,7 @@
           </el-dropdown>
         </template>
       </el-table-column>
+
     </el-table>
   </div>
 
@@ -396,7 +472,7 @@ export default {
       this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
       })
         .then(() => {
           // 确定按钮 点击事件 调用删除文件接口
@@ -497,6 +573,7 @@ export default {
             }
         }
     },
+    
     //  计算文件大小
     calculateFileSize(size) {
         const B = 1024
@@ -584,13 +661,24 @@ export default {
 };
 </script>
 
+<style>
+  .el-message-box{
+    width: 300px
+  }
+
+</style>
 <style lang="stylus" scoped>
 @import '~@/assets/style/varibles.styl';
 @import '~@/assets/style/mixins.styl';
 
+
 .file-table-wrapper {
   overflow: hidden;
   margin-top: 2px;
+  
+  .el-table::before {
+    height: 0px;
+  }
 
   .file-type-0 {
     height: calc(100vh - 206px) !important;
@@ -639,6 +727,7 @@ export default {
     }
 
     >>> .el-table__body-wrapper {
+
       height: calc(100vh - 255px);
       // height: 90%;
       overflow-y: auto;

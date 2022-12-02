@@ -1,7 +1,7 @@
 <template>
   <div class="operation-menu-wrapper">
     <!-- 按钮组 -->
-    <el-button-group class="operate-group">
+    <el-button-group class="operate-group" v-if="!operationFileList.length">
       <!-- disabled 只在全部类型页面 才可新建文件夹 -->
       <el-button
         size="mini"
@@ -21,7 +21,8 @@
         v-if="fileType >= 0 && fileType <= 5"
         >上传</el-button
       >
-      <!-- disabled 当表格勾选项为空时，禁用删除按钮 -->
+    </el-button-group>
+    <el-button-group v-if="operationFileList.length">
       <el-button
           size="mini"
           type="primary"
@@ -51,7 +52,7 @@
         v-if="fileType >= 0 && fileType <= 5"
         >下载</el-button
       >
-
+  
       <el-button
         size="mini"
         type="primary"
@@ -61,7 +62,10 @@
         v-if="fileType >= 0 && fileType <= 5"
         >分享</el-button
       >
+    
+    </el-button-group>
 
+    <el-button-group>
       <el-button
         size="mini"
         type="primary"
@@ -69,7 +73,7 @@
         :disabled="!operationFileList.length"
         @click="handleRecoveryFileClick()"
         v-if="fileType == 6"
-        >还原</el-button
+        >批量还原</el-button
       >
       <el-button
         size="mini"

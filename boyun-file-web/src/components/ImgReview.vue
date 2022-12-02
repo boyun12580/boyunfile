@@ -41,7 +41,7 @@
             鼠标滚轮可放大缩小图片
           </div>
           <div class="item text-wrapper">
-            <span class="text">操作提示</span>
+            <!-- <span class="text">操作提示</span> -->
             <i class="el-icon-question"></i>
           </div>
         </el-tooltip>

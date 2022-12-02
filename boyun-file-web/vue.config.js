@@ -4,7 +4,7 @@ const productConfig = require("./public/config.json"); // 引入config.json文�
 module.exports = {
   // transpileDependencies: true,
   lintOnSave: false,
-  publicPath: "/",
+  publicPath: "./",
   devServer: {
     host: "0.0.0.0",
     port: 8081,
