@@ -36,7 +36,7 @@ const routes = [
     }
   },
   {
-    path: '/:shareBatchNum',
+    path: '/share/:shareBatchNum',
     name: 'Share',
     component: () => import(/* webpackChunkName: "share" */ "../views/Share.vue"),
     meta: {

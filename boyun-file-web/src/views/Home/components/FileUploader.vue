@@ -2,7 +2,7 @@
   <div id="global-uploader">
     <!-- 上传组件 -->
     <uploader
-      class="uploader-box"
+      :class="screenWidth > 520 ? 'uploader-box-isMax' : 'uploader-box-isMin'"
       ref="uploader"
       :options="options"
       :autoStart="false"
@@ -23,6 +23,13 @@
             <span class="text">上传列表</span>
             <div class="operate-btn-wrapper"> 
               <el-button
+								type="text"
+								:title="!collapse ? '展开' : '折叠'"
+								:icon="!collapse ? 'el-icon-full-screen' : 'el-icon-minus'"
+								@click="collapse ? (collapse = false) : (collapse = true)"
+							>
+							</el-button>
+              <el-button
                 type="text"
                 title="关闭窗口"
                 icon="el-icon-close"
@@ -32,7 +39,7 @@
             </div>
           </div>
           <!-- 正在上传的文件列表 -->
-          <ul class="file-list">
+          <ul class="file-list" v-if="collapse">
             <li class="file-item" v-for="file in props.fileList" :key="file.id">
               <uploader-file
                 ref="files"
@@ -84,6 +91,7 @@ export default {
       attrs: {
         accept: "*", // 可接受的文件类型
       },
+      collapse: true, //	上传文件面板是否折叠
       panelShow: false, //  上传文件面板是否显示
     };
   },
@@ -100,6 +108,10 @@ export default {
     startUploadFile() {
       return this.$store.state.file.startUploadFile;
     },
+    // 屏幕宽度
+		screenWidth() {
+			return this.$store.state.common.screenWidth
+		},
   },
   methods: {
     // 触发选择文件按钮的点击事件
@@ -212,14 +224,19 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+
 #global-uploader {
   position: fixed;
   z-index: 20;
-  right: 15px;
-  bottom: 15px;
+  right: 0px;
+  bottom: 0px;
 
-  .uploader-box {
+  .uploader-box-isMax {
     width: 520px;
+  }
+
+  .uploader-box-isMin {
+    width: 350px;
   }
 
   .file-panel {

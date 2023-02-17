@@ -52,12 +52,13 @@
         :loading="loading"
       ></FileTimeLine>
       <FilePagination
-        :style="screenWidth <= 768 && fileType !== 0 ? 'padding-top: 18px;': ''"
+        :style="screenWidth <= 768 && fileType !== 0 ? 'padding-top: 18px;' : '' "
         :pageData="pageData"
         @changePageData="changePageData"
         v-if="fileType != 6"
       ></FilePagination>
     </div>
+    
     <!-- 文件上传组件 -->
     <FileUploader
       ref="globalUploader"
@@ -73,6 +74,21 @@
     ></MoveFileDialog>
     <!-- 使用图片在线查看组件 -->
     <ImgReview></ImgReview>
+    <VideoReview
+      videoCover=""
+      :width="(screenWidth < 786 ? screenWidth : 800)"
+      :height="(screenWidth < 786 ? screenWidth*9/16 : 500)"
+      :autoplay="false"
+      :controls="true"
+      :loop="false"
+      :muted="false"
+      preload="auto"
+      :playWidth="96"
+      zoom=""
+    ></VideoReview>
+    <!-- 教程链接https://blog.csdn.net/Dandrose/article/details/127249685 -->
+
+    <WordReview></WordReview>
   </div>
 </template>
 
@@ -93,9 +109,11 @@ import { batchMoveFile } from '@/request/file.js'
 import ShowModel from './components/ShowModel.vue' //  引入查看模式切换组件
 import FileGrid from './components/FileGrid.vue' //  引入网格组件
 import FileTimeLine from "./components/FileTimeLine.vue"; //  引入时间线模式组件
-import ImgReview from "@/components/ImgReview"; //  引入图片在线查看组件
 import { getRecoveryFileList } from "@/request/recoveryFile.js" // 回收站
 import { getShareList } from "@/request/share.js" // 获取我的分享文件列表
+import ImgReview from "@/components/ImgReview"; //  引入图片在线查看组件
+import VideoReview from "@/components/VideoReview"; //  引入视频在线查看组件
+import WordReview from "@/components/WordReview"; //  引入视频在线查看组件
 
 export default {
   name: "Home",
@@ -112,6 +130,8 @@ export default {
     FileGrid,
     FileTimeLine,
     ImgReview,
+    VideoReview,
+    WordReview,
   },
   data() {
     return {
@@ -282,6 +302,14 @@ export default {
 				this.loading = false
 				if (res.success) {
 					this.tableData = res.data.list // 表格数据赋值
+
+          // this.tableData = res.data.list.map((item) => {
+					// 	return {
+					// 		...item,
+					// 		highlightFields: item.highLight.fileName[0]
+					// 	}
+					// })
+
           this.pageData.total = res.data.total //  分页组件 - 文件总数赋值
 				} else {
 					this.$message.error(res.message)

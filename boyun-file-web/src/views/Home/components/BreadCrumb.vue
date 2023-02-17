@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import common from '@/store/module/common';
 export default {
   name: "BreadCrumb",
   props: {
@@ -143,7 +144,11 @@ export default {
 		},
 
     getRouteQuery(item){
-      return { query: { fileType: this.fileType, filePath: item.path }}
+      if(this.fileType === 8 && item.path != '/'){
+        return { query: { fileType: this.fileType, filePath: item.path, shareBatchNum: this.$route.query.shareBatchNum }}
+      }else{
+        return { query: { fileType: this.fileType, filePath: item.path }}
+      }
     }
   }
 };

@@ -49,7 +49,7 @@
         icon="el-icon-download"
         :disabled="!operationFileList.length"
         @click="handleDownloadFileClick()"
-        v-if="fileType >= 0 && fileType <= 5"
+        v-if="(fileType >= 0 && fileType <= 5)"
         >下载</el-button
       >
   
@@ -90,7 +90,7 @@
     <!-- @closed 对话框关闭动画结束时 重置表单并清空所有表单校验 -->
     <el-dialog
       title="新建文件夹"
-      width="600px"
+      :width="screenWidth <= 520 ? '300px' : '500px'"
       :visible.sync="addFolderDialog.visible"
       @closed="$refs.addFolderForm.resetFields()"
     >

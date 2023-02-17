@@ -80,7 +80,7 @@ export default {
 .header-wrapper {
   overflow: hidden;
   width: 100%;
-  padding: 0 20px;
+  // padding: 0 20px;
   box-shadow: $tabBoxShadow;
   display: flex;
 

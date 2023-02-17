@@ -15,7 +15,6 @@
         width="56"
         align="center"
         :selectable="selectEnable"
-        v-if="fileType < 7"
       ></el-table-column>
 
       <el-table-column label prop="isDir" :width="screenWidth <= 768 ? 40 : 56" align="center" key="isDir">
@@ -113,12 +112,12 @@
                     <el-dropdown-item @click.native="handleClickShareFileInfo(scope.row)" v-if="fileType == 8"
                       >查看分享</el-dropdown-item
                     >
-                    <el-dropdown-item @click.native="handleClickDeleteShareFile(scope.row)" v-if="fileType == 8 && scope.row.filePath == '/'"
+                    <el-dropdown-item @click.native="handleClickDeleteShareFile(scope.row)" v-if="fileType == 8"
                       >取消分享</el-dropdown-item
                     >
 
-                    <el-dropdown-item @click.native="" v-if="scope.row.isDir === 1 && fileType == 7"
-                      >查看</el-dropdown-item
+                    <el-dropdown-item @click.native="handleClickShareDownload()" v-if="scope.row.isDir === 1 && fileType == 7"
+                      >下载</el-dropdown-item
                     >
 
                     <el-dropdown-item v-if="scope.row.isDir === 0 && (fileType >= 0 && fileType <= 5 || fileType == 7)">
@@ -287,12 +286,12 @@
               <el-dropdown-item @click.native="handleClickShareFileInfo(scope.row)" v-if="fileType == 8"
                 >查看分享</el-dropdown-item
               >
-              <el-dropdown-item @click.native="handleClickDeleteShareFile(scope.row)" v-if="fileType == 8 && scope.row.filePath == '/'"
+              <el-dropdown-item @click.native="handleClickDeleteShareFile(scope.row)" v-if="fileType == 8"
                 >取消分享</el-dropdown-item
               >
 
-              <el-dropdown-item @click.native="" v-if="scope.row.isDir === 1 && fileType == 7"
-                >查看</el-dropdown-item
+              <el-dropdown-item @click.native="handleClickShareDownload()" v-if="scope.row.isDir === 1 && fileType == 7"
+                >下载</el-dropdown-item
               >
 
               <el-dropdown-item v-if="scope.row.isDir === 0 && (fileType >= 0 && fileType <= 5 || fileType == 7)">
@@ -317,6 +316,7 @@
 import { deleteFile } from '@/request/file.js'
 import { renameFile } from '@/request/file.js' //  引入文件重命名接口
 import { recoveryFile, deleteRecoveryFile } from '@/request/recoveryFile.js'
+import { deleteShare } from '@/request/share.js'
 import config from '@/config/index.js'
 import shareFile from '@/views/Home/components/dialog/shareFile/Dialog.vue'
 
@@ -380,6 +380,11 @@ export default {
   },
   methods: {
 
+    // 点击下载的文件为文件夹
+    handleClickShareDownload(){
+      this.$message.error('暂不支持下载文件夹')
+    },
+
     /**
      * 当前行为文件夹时，多选框变为不可选
      * 在回收站时固定可用
@@ -414,7 +419,20 @@ export default {
 			})
     },
     handleClickDeleteShareFile(row){
-      alert('?')
+      deleteShare({
+        userFileId : row.userFileId,
+        shareFileId : row.shareFileId,
+        shareBatchNum : row.shareBatchNum
+      }).then(
+        (res) => {
+          if (res.success) {
+              this.$emit('getTableData') //  刷新文件列表
+              this.$message.success('取消成功')
+            } else {
+              this.$message.error(res.message)
+            }
+        }
+      )
     },
 
     // 还原文件
@@ -516,7 +534,7 @@ export default {
           return this.fileImgMap.fold
         } else if (['jpg', 'png', 'jpeg', 'gif'].includes(row.extendName)) {
           // 图片类型，直接显示缩略图
-          return this.downloadImgMin(row)
+          return config.localUrl + this.downloadImgMin(row)
         } else {
           const fileTypeMap = {
             pptx: 'ppt',
@@ -557,11 +575,13 @@ export default {
         } else {
             //  若当前点击项是图片
             const PIC = ['png', 'jpg', 'jpeg', 'gif', 'svg']
+            const VIE = ['avi', 'mp4', 'mpg', 'mov', 'swf']
+            const WORD = ["doc", "docx", "ppt", "pptx", "xls", "xlsx", "txt", "hlp", "wps", "rtf", "html", "pdf"]
             if (PIC.includes(row.extendName)) {
                 let data = {
                     imgReviewVisible: true,
                     imgReviewList: [{
-                      fileUrl: `/${config.staticContext}${row.fileUrl}`,
+                      fileUrl: `${config.staticContext}${row.fileUrl}`,
                       // fileUrl: `${row.fileUrl}`,
                       downloadLink: `/${config.baseContext}/filetransfer/downloadfile?userFileId=${row.userFileId}`,
                         fileName: row.fileName,
@@ -570,6 +590,21 @@ export default {
                     activeIndex: 0
                 }
                 this.$store.commit('setImgReviewData', data)    //    触发图片在线查看
+            }
+            if(VIE.includes(row.extendName)){
+              let data = {
+                videoReviewVisible: true,
+                videoUrl: `/${config.baseContext}/filetransfer/downloadfile?userFileId=${row.userFileId}`
+              }
+              this.$store.commit('setVideoReviewData', data)
+            }
+            if(WORD.includes(row.extendName)){
+
+              let data = {
+                wordReviewVisible: true,
+                wordUrl: `/${config.baseContext}/filetransfer/downloadfile?userFileId=${row.userFileId}`
+              }
+              this.$store.commit('setWordReviewData', data)
             }
         }
     },

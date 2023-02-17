@@ -4,6 +4,8 @@ import Vuex from "vuex";
 import user from "./module/user"; // 引入 user.js
 import file from "./module/file"; // 引入 file 模块
 import imgReview from "./module/imgReview"; // 引入 imgReview 模块
+import videoReview from "./module/videoReview"; 
+import wordReview from "./module/wordReview"; 
 import common from './module/common' //  公共模块
 
 Vue.use(Vuex);
@@ -38,6 +40,9 @@ export default new Vuex.Store({
     user,
     file,
     imgReview,
+    videoReview,
+    wordReview,
     common,
+
   },
 });
