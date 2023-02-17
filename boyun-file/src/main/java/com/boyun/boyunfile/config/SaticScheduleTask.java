@@ -26,8 +26,8 @@ public class SaticScheduleTask {
     @Autowired
     private ShareService shareService;
 
-//    每天23点59分59秒触发任务
-    @Scheduled(cron = "59 59 23 * * ?")
+//    每天0点1分1秒触发任务
+    @Scheduled(cron = "1 1 0 * * ?")
     private void shareTimeTasks() throws ParseException {
         QueryWrapper<Share> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("endTime", "shareId","shareStatus");

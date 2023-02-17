@@ -9,6 +9,8 @@ import javax.persistence.Column;
 @Schema(description="获取我的分享文件列表VO")
 public class ShareListVO {
 
+    @Schema(description="分享文件id")
+    private Long shareFileId;
     @Schema(description="用户文件id")
     private Long userFileId;
     @Schema(description="文件url")

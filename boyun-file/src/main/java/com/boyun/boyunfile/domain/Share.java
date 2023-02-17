@@ -30,9 +30,9 @@ public class Share  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @TableId(type = IdType.AUTO)
     @Column(columnDefinition="bigint(20)")
-    private Long shareid;
+    private Long shareId;
 
-    //失效时间
+    // 失效时间
     @Column(columnDefinition="varchar(30)")
     private String endTime;
     //提取码

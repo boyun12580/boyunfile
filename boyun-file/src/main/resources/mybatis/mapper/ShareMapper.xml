@@ -10,6 +10,7 @@
             u.extendName ,
             u.fileName ,
             u.isDir ,
+            s.shareFileId ,
             s.shareFilePath as filePath,
             s2.endTime ,
             s2.shareBatchNum ,
@@ -36,7 +37,7 @@
         <if test="param5 != null">
             and s.shareBatchNum = #{param5}
         </if>
-        order by s2.endTime desc
+        order by s2.endTime desc, s2.shareId
         limit #{param3}, #{param4}
 
     </select>
@@ -76,7 +77,15 @@
         select count(*)
         from boyunfile.sharefile s1
         left join boyunfile.share s2 on s1.shareBatchNum = s2.shareBatchNum
-        where s2.userId = #{param1}
-        and s1.shareFilePath = #{param2}
+        <where>
+            s2.userId = #{param1}
+            and s1.deleteFlag = 0
+            <if test="param2 != null">
+                and s1.shareFilePath = #{param2}
+            </if>
+            <if test="param3 != null">
+                and s2.shareBatchNum = #{param3}
+            </if>
+        </where>
     </select>
 </mapper>

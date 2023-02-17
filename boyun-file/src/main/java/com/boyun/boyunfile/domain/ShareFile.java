@@ -17,17 +17,17 @@ public class ShareFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @TableId(type = IdType.AUTO)
     @Column(columnDefinition="bigint(20)")
-    private Long sharefileid;
+    private Long shareFileId;
 
     //分享批次号
     @Column(columnDefinition="varchar(50)")
-    private String sharebatchnum;
+    private String shareBatchNum;
     //分享文件路径
     @Column(columnDefinition="varchar(100)")
-    private String sharefilepath;
+    private String shareFilePath;
     //用户文件id
     @Column(columnDefinition="bigint(20)")
-    private Long userfileid;
+    private Long userFileId;
 
     @Column(columnDefinition="int(11) comment '删除标志 0-未删除 1-已删除'")
     private Integer deleteFlag;

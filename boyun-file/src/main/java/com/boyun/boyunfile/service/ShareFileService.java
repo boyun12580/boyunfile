@@ -8,7 +8,9 @@ import org.springframework.data.relational.core.sql.In;
 import java.util.List;
 
 public interface ShareFileService extends IService<ShareFile> {
-    List<UserFile> selectShareFileTreeListLikeFilePath(String filePath, long userId);
+    List<UserFile> selectUserFileTreeListLikeFilePath(String filePath, long userId);
     void shareFile(Long userFileId, Long userId, String shareBatchnum);
-    Integer countShareFile(Long userId, String filePath);
+    Integer countShareFile(Long userId, String filePath, String shareBatchnum);
+    void deleteShare(Long userFileId, Long shareFileId, String shareBatchNum);
+    List<ShareFile> selectShareFileTreeListLikeFilePath(String filePath, String shareBatchNum);
 }

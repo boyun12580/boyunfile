@@ -8,10 +8,7 @@ import com.boyun.boyunfile.constant.ShareConstant;
 import com.boyun.boyunfile.domain.Share;
 import com.boyun.boyunfile.domain.ShareFile;
 import com.boyun.boyunfile.domain.UserFile;
-import com.boyun.boyunfile.dto.CheckShareCodeDTO;
-import com.boyun.boyunfile.dto.ShareFileDTO;
-import com.boyun.boyunfile.dto.ShareFileListDTO;
-import com.boyun.boyunfile.dto.ShareListDTO;
+import com.boyun.boyunfile.dto.*;
 import com.boyun.boyunfile.service.ShareFileService;
 import com.boyun.boyunfile.service.ShareService;
 import com.boyun.boyunfile.util.DateUtil;
@@ -67,7 +64,7 @@ public class ShareController {
                 shareListDTO.getPageCount(),
                 shareListDTO.getShareBatchnum());
 
-        int total = shareFileService.countShareFile(shareListDTO.getUserId(), shareListDTO.getFilePath());
+        int total = shareFileService.countShareFile(shareListDTO.getUserId(), shareListDTO.getFilePath(), shareListDTO.getShareBatchnum());
 
         Map<String, Object> map = new HashMap<>();
         map.put("total", total);
@@ -189,9 +186,11 @@ public class ShareController {
     @Operation(summary = "取消分享文件", description = "取消分享文件", tags = { "deleteshare" })
     @RequestMapping(value = "/deleteshare", method = RequestMethod.POST)
     @ResponseBody
-    public RestResult deleteShare() {
-        //todo
-        return null;
+    public RestResult deleteShare(@RequestBody DeleteShareDTO deleteShareDTO) {
+
+        shareFileService.deleteShare(deleteShareDTO.getUserFileId(), deleteShareDTO.getShareFileId(), deleteShareDTO.getShareBatchNum());
+
+        return RestResult.success().message("取消成功");
     }
 
     @Operation(summary = "保存分享文件到我的网盘", description = "保存分享文件到我的网盘", tags = { "savesharefile" })

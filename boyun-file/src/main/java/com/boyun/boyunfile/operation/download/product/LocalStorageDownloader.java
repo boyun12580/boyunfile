@@ -35,6 +35,8 @@ public class LocalStorageDownloader extends Downloader {
                     i = bis.read(buffer);
                 }
 
+            }catch(IOException ioException) {
+                System.err.println(ioException.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

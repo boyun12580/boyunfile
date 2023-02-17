@@ -106,9 +106,13 @@ public class FileController {
                 searchUserFileDTO.getCurrentPage(), searchUserFileDTO.getPageCount());
 
 
+        LambdaQueryWrapper<UserFile> userFileLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        userFileLambdaQueryWrapper.eq(UserFile::getUserId, sessionUser.getUserId())
+                .like(UserFile::getFileName, searchUserFileDTO.getFileName());
+        int total = userfileService.count(userFileLambdaQueryWrapper);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("total", list.size());
+        map.put("total", total);
         map.put("list", list);
 
         return RestResult.success().data(map);

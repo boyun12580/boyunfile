@@ -96,7 +96,7 @@
                 and a.fileName like concat('%', #{userfile.fileName}, '%')
             </if>
         </where>
-        ORDER BY isDir desc
+        ORDER BY a.isDir desc, a.userFileId
         limit #{beginCount}, #{pageCount}
     </select>
 

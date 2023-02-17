@@ -121,6 +121,7 @@ public class FiletransferController {
     @Operation(summary = "下载文件", description = "下载文件接口", tags = {"filetransfer"})
     @RequestMapping(value = "/downloadfile", method = RequestMethod.GET)
     public void downloadFile(HttpServletResponse response, DownloadFileDTO downloadFileDTO) {
+//        System.out.println(downloadFileDTO);
         filetransferService.downloadFile(response, downloadFileDTO);
     }
 
