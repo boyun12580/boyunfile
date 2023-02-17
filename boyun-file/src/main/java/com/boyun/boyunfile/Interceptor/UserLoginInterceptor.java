@@ -61,8 +61,9 @@ public class UserLoginInterceptor implements HandlerInterceptor {
 
         } catch (IOException e) {
         } finally {
-            if (writer != null)
+            if (writer != null) {
                 writer.close();
+            }
         }
     }
 
