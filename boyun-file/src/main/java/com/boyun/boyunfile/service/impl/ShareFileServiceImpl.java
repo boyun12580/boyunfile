@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Slf4j
 @Service
@@ -30,7 +29,8 @@ public class ShareFileServiceImpl extends ServiceImpl<ShareFileMapper, ShareFile
     @Resource
     private UserfileMapper userfileMapper;
 
-    public static Executor executor = Executors.newFixedThreadPool(20);
+    private ThreadPoolExecutor executor = new ThreadPoolExecutor(20, 40, 10, TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(4));
 
     @Override
     public void shareFile(Long userFileId, Long userId, String shareBatchNum) {
@@ -101,7 +101,7 @@ public class ShareFileServiceImpl extends ServiceImpl<ShareFileMapper, ShareFile
 
 //    开多线程来分享目录以下的子目录或文件
     private void shareFileByFilePath(String shareFilePath, String shareBatchnum, Long userId, String originFilePath) {
-        new Thread(()->{
+        executor.execute(()->{
             List<UserFile> fileList = selectUserFileTreeListLikeFilePath(shareFilePath, userId);
             for (int i = 0; i < fileList.size(); i++){
                 UserFile userFileTemp = fileList.get(i);
@@ -116,11 +116,11 @@ public class ShareFileServiceImpl extends ServiceImpl<ShareFileMapper, ShareFile
                 });
 
             }
-        }).start();
+        });
     }
 
     private void deleteShareByFilePath(String shareFilePath, String shareBatchnum) {
-        new Thread(()->{
+        executor.execute(()->{
             List<ShareFile> fileList = selectShareFileTreeListLikeFilePath(shareFilePath, shareBatchnum);
             for (int i = 0; i < fileList.size(); i++){
                 ShareFile shareFileTemp = fileList.get(i);
@@ -130,6 +130,6 @@ public class ShareFileServiceImpl extends ServiceImpl<ShareFileMapper, ShareFile
                 });
 
             }
-        }).start();
+        });
     }
 }

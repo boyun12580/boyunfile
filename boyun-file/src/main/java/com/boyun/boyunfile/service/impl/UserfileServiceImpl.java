@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Slf4j
 @Service
@@ -36,7 +35,10 @@ public class UserfileServiceImpl extends ServiceImpl<UserfileMapper, UserFile> i
     @Resource
     private RecoveryFileMapper recoveryFileMapper;
 
-    public static Executor executor = Executors.newFixedThreadPool(20);
+    private ThreadPoolExecutor executor = new ThreadPoolExecutor(20, 40, 10, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(4));
+
+//    public static Executor executor = Executors.newFixedThreadPool(20);
 
     @Override
     public List<UserFileListVO> getUserFileByFilePath(String filePath, Long userId, Long currentPage, Long pageCount) {
@@ -207,7 +209,7 @@ public class UserfileServiceImpl extends ServiceImpl<UserfileMapper, UserFile> i
     //    删除目录时需要将该文件目录下的所有文件都放入回收站，而代码实现则是通过一个删除标志来实现，
 //    为了防止文件目录下文件特别多，因此这里需要创建一个新的线程去执行，防止出现阻塞
     private void updateFileDeleteStateByFilePath(String filePath, String deleteBatchNum, Long userId) {
-        new Thread(()->{
+        executor.execute(()->{
             List<UserFile> fileList = selectFileTreeListLikeFilePath(filePath, userId);
             for (int i = 0; i < fileList.size(); i++){
                 UserFile userFileTemp = fileList.get(i);
@@ -222,6 +224,6 @@ public class UserfileServiceImpl extends ServiceImpl<UserfileMapper, UserFile> i
                 });
 
             }
-        }).start();
+        });
     }
 }

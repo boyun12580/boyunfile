@@ -1,4 +1,4 @@
 {
-  "baseUrl_t": "http://localhost:8090",
-  "baseUrl": "http://182.61.20.223:8090"
+  "baseUrl": "http://localhost:8090",
+  "baseUrl_t": "http://182.61.20.223:8090"
 }
