@@ -92,8 +92,8 @@ public class FiletransferController {
 
                 userfile.setFileName(fileName.toString());
 
-                userfileService.save(userfile);
                 // fileService.increaseFilePointCount(file.getFileId());
+                userfileService.save(userfile);
                 uploadFileVo.setSkipUpload(true);
 
             } else {

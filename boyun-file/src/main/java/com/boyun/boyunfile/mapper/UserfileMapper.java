@@ -19,4 +19,6 @@ public interface UserfileMapper extends BaseMapper<UserFile> {
     Long selectStorageSizeByUserId(Long userId);
     List<UserFileListVO> searchUserFileList(UserFile userfile, Long beginCount, Long pageCount);
     List<UserFile> selectRecoveryFile(String deleteBatchNum);
+
+    UserFile getIsDeleteUserFile(Long userFileId);
 }

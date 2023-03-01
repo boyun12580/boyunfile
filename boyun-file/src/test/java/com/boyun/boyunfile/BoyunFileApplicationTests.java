@@ -159,16 +159,13 @@ class BoyunFileApplicationTests {
     UserFileService userfileService;
     @Test
     void testVolatile(){
-//        StringBuffer stringBuffer = new StringBuffer("asa");
-//        stringBuffer.append(1);
-//        System.out.println(stringBuffer.toString());
-//        LambdaQueryWrapper<UserFile> wrapper = new LambdaQueryWrapper<>();
-//        wrapper.eq(UserFile::getFileName, "titleLogo");
-//        List<UserFile> files = userfileService.list(wrapper);
-//        System.out.println(files);
-        StringBuffer stringBuffer = new StringBuffer("123");
-        stringBuffer.append(55);
-        System.out.println(stringBuffer);
+        String s = "/目录一/目录二/目录三/";
+
+        String path = s.substring(0, s.lastIndexOf("/", s.length() - 2) + 1);
+        int i = path.lastIndexOf("/", path.length() - 2);
+        String fatherName = path.substring(i + 1, path.length() - 1);
+        System.out.println(path);
+        System.out.println(fatherName);
     }
 
     @Test

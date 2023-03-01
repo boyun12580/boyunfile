@@ -84,6 +84,11 @@
         where userfile.deleteBatchNum = #{deleteBatchNum} and deleteFlag = 1
     </select>
 
+    <select id="getIsDeleteUserFile" resultType="com.boyun.boyunfile.domain.UserFile" parameterType="java.lang.Long">
+        select * from boyunfile.userfile
+        where userfile.userFileId = #{userFileId} and deleteFlag = 1
+    </select>
+
     <select id="searchUserFileList" parameterType="com.boyun.boyunfile.domain.UserFile" resultType="com.boyun.boyunfile.vo.UserFileListVO">
         select * from boyunfile.userfile as a
         left join boyunfile.file as f on f.fileId = a.fileId

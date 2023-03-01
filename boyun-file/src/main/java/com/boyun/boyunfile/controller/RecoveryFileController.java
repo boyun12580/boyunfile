@@ -1,12 +1,14 @@
 package com.boyun.boyunfile.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.boyun.boyunfile.common.RestResult;
 import com.boyun.boyunfile.domain.RecoveryFile;
 import com.boyun.boyunfile.domain.User;
 import com.boyun.boyunfile.domain.UserFile;
 import com.boyun.boyunfile.dto.*;
 import com.boyun.boyunfile.service.RecoveryFileService;
+import com.boyun.boyunfile.service.UserFileService;
 import com.boyun.boyunfile.service.UserService;
 import com.boyun.boyunfile.vo.RecoveryFileListVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +29,9 @@ public class RecoveryFileController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private UserFileService userFileService;
 
     @Resource
     private RecoveryFileService recoveryFileService;
@@ -52,11 +57,18 @@ public class RecoveryFileController {
     @ResponseBody
     public RestResult recoveryFile(@RequestBody RecoveryFileDTO recoveryFileDTO) {
 
+        RecoveryFile recoveryFile = recoveryFileService.getById(recoveryFileDTO.getRecoveryFileId());
+
+        UserFile userFile = userFileService.getIsDeleteUserFile(recoveryFile.getUserFileId());
+        if(!isExistOfFather(userFile)){
+            return RestResult.fail().message("原文件夹不存在或被删除");
+        }
+
         recoveryFileService.recoveryFile(recoveryFileDTO.getRecoveryFileId());
 
         return RestResult.success();
-
     }
+
 
     @Operation(summary = "批量还原文件", description = "批量还原文件或者目录", tags = { "batchrecoveryfile" })
     @RequestMapping(value = "/batchrecoveryfile", method = RequestMethod.POST)
@@ -95,6 +107,27 @@ public class RecoveryFileController {
         }
 
         return RestResult.success().message("批量删除文件成功");
+    }
+
+    private boolean isExistOfFather(UserFile userFile) {
+
+        String path = userFile.getFilePath().substring(0, userFile.getFilePath().lastIndexOf("/", userFile.getFilePath().length() - 2) + 1);
+        if("/".equals(path)){
+            return true;
+        }
+        String fatherName = userFile.getFilePath().substring(path.length(), userFile.getFilePath().length() - 1);
+
+        LambdaQueryWrapper<UserFile> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserFile::getFilePath, path)
+                .eq(UserFile::getFileName, fatherName)
+                .eq(UserFile::getIsDir, 1)
+                .eq(UserFile::getDeleteFlag, 0)
+                .eq(UserFile::getUserId, userFile.getUserId());
+        List<UserFile> list = userFileService.list(queryWrapper);
+        if(list.isEmpty()){
+            return false;
+        }
+        return true;
     }
 
 }

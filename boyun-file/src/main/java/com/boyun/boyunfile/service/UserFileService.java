@@ -17,5 +17,5 @@ public interface UserFileService extends IService<UserFile> {
     List<UserFile> selectUserFileByNameAndPath(String fileName, String filePath, Long userId);
     void replaceUserFilePath(String filePath, String oldFilePath, Long userId);
     List<UserFileListVO> searchUserFileList(String fileName, Long userId, Long currentPage, Long pageCount);
-
+    UserFile getIsDeleteUserFile(Long userFileId);
 }
